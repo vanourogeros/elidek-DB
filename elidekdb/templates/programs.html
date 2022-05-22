@@ -7,26 +7,26 @@
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">
-    <table class="table table-sm table-borderless">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>ELIDEK Sector</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for program in programs %}
-                <tr>
-                    <td> {{ program.Name }} </td>
-                    <td> {{ program.ELIDEK_Sector }} </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
-</div>
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>ELIDEK Sector</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for program in programs %}
+                            <tr>
+                                <td> {{ program.Name }} </td>
+                                <td> {{ program.ELIDEK_Sector }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
