@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h3>ELIDEK Programs</h3>
+    <table class="table table-sm table-borderless">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>ELIDEK Sector</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for program in programs %}
+                <tr class="program-row">
+                    <td>{{ program.Name }}</td>
+                    <td>{{ program.ELIDEK_Sector }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
