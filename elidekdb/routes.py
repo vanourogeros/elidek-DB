@@ -8,15 +8,18 @@ def index():
 
 
 @app.route("/programs")
-def programs_view:
+def programs_view():
     cur = db.connection.cursor()   
 
     query = """
-    SELECT DISTINCT 
-    Name, ELISEK_Sector
-    FROM Programs
+    SELECT *
+    FROM Program
     """
     cur.execute(query)
-    programs = cur.fetchall()
+    column_names = [i[0] for i in cur.description]
+    programs = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    #programs = cur.fetchall()
+    cur.close()
+    #print(programs[1])
 
-    return render_template("programs.html", programs=programs)
+    return render_template("programs.html", programs=programs, pageTitle = "Programs Page")

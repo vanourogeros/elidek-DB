@@ -1,22 +1,32 @@
-{% extends "base.html" %}
+{% extends "global_layout.html" %}
 {% block content %}
 <div class="container">
+    {% include "flash_messages.html" %}
     <h3>ELIDEK Programs</h3>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
     <table class="table table-sm table-borderless">
         <thead>
             <tr>
-                <td>Name</td>
-                <td>ELIDEK Sector</td>
+                <th>Name</th>
+                <th>ELIDEK Sector</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for program in programs %}
-                <tr class="program-row">
-                    <td>{{ program.Name }}</td>
-                    <td>{{ program.ELIDEK_Sector }}</td>
+                <tr>
+                    <td> {{ program.Name }} </td>
+                    <td> {{ program.ELIDEK_Sector }} </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}
