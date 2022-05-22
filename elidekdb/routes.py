@@ -4,5 +4,4 @@ from elidekdb import app, db ## initially created by __init__.py, need to be use
 
 @app.route("/")
 def index():
-    try:
-        return render_template("landing.html", pageTitle = "Landing Page")
+    return render_template("landing.html", pageTitle = "Landing Page")
