@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS  Organization (
   Organization_ID INT UNSIGNED NOT NULL,
   Acronym VARCHAR(45) NOT NULL,
   Name VARCHAR(45) NOT NULL,
-  Phone_Number CHAR(10) NOT NULL,
   Street VARCHAR(45) NOT NULL,
   Street_Number INT UNSIGNED NOT NULL,
   City VARCHAR(45) NOT NULL,
@@ -82,7 +81,7 @@ CREATE TABLE IF NOT EXISTS  Researcher (
   Recruitment_Date DATE NOT NULL,
   Organization_ID INT UNSIGNED NOT NULL,
   CHECK(Gender IN ('Male','Female','Other')),
-  CHECK(DATEDIFF(Recruitment_Date, Birth_Date) > 5840), -- Researcher must be at least 16 years old when recruited
+  CHECK(DATEDIFF(NOW(), Birth_Date) > 5840 AND DATEDIFF(Recruitment_Date, NOW()) < 0), -- Researcher must be at least 16 years old
   PRIMARY KEY (Researcher_ID),
   INDEX fk_Researcher_Organization1_idx (Organization_ID ASC) ,
   CONSTRAINT fk_Researcher_Organization1
@@ -100,7 +99,7 @@ CREATE TABLE IF NOT EXISTS University (
   University_ID INT UNSIGNED NOT NULL,
   Ministry_Budget INT UNSIGNED NULL,
   PRIMARY KEY (University_ID),
-  Org_type ENUM('University') NOT NULL,
+  Org_type ENUM('University') NOT NULL REFERENCES Organization (Org_Type),
   CONSTRAINT fk_University_Organization1
     FOREIGN KEY (University_ID)
     REFERENCES Organization (Organization_ID)
@@ -114,7 +113,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Research_Center (
   Research_Center_ID INT UNSIGNED NOT NULL,
-  Org_type ENUM('Research Center') NOT NULL,
+  Org_type ENUM('Research Center') NOT NULL REFERENCES Organization (Org_Type),
   Ministry_Budget VARCHAR(45) NULL,
   Actions_Budget VARCHAR(45) NULL,
   PRIMARY KEY (Research_Center_ID),
@@ -131,7 +130,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Company (
   Company_ID INT UNSIGNED NOT NULL,
-  Org_type ENUM('Company') NOT NULL,
+  Org_type ENUM('Company') NOT NULL REFERENCES Organization (Org_Type),
   Equity INT UNSIGNED NULL,
   PRIMARY KEY (Company_ID),
   CONSTRAINT fk_Company_ID
@@ -158,9 +157,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS Work_to_be_Submitted (
   Title VARCHAR(45) NOT NULL,
   Project_ID INT UNSIGNED NOT NULL,
-  Summary VARCHAR(45) NOT NULL,
+  Summary VARCHAR(300) NOT NULL,
   Submission_Date DATE NOT NULL,
-  Work_to_be_Submittedcol VARCHAR(45) NULL,
   PRIMARY KEY (Title, Project_ID),
   INDEX fk_project0_idx (Project_ID ASC) ,
   CONSTRAINT fk_project0
@@ -200,7 +198,7 @@ CREATE TABLE IF NOT EXISTS Evaluation (
   Researcher_ID INT UNSIGNED NOT NULL,
   Project_ID INT UNSIGNED NOT NULL,
   Evaluation_Date DATE NOT NULL,
-  Enaluation_Grade INT UNSIGNED NULL,
+  Evaluation_Grade INT UNSIGNED NULL,
   PRIMARY KEY (Researcher_ID, Project_ID),
   INDEX fk_Project_ID_idx (Project_ID ASC) ,
   CONSTRAINT fk_Researcher_ID
@@ -222,7 +220,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS Org_Phone (
   Organization_ID INT UNSIGNED NOT NULL,
   Phone_Number CHAR(10) NOT NULL,
-CONSTRAINT chk_phone CHECK (Phone_Number like '[0-9]*'), -- check that no number is not a digit 
+-- CONSTRAINT chk_phone CHECK (Phone_Number like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
   PRIMARY KEY (Organization_ID, Phone_Number),
   CONSTRAINT fk_Organization_ID
     FOREIGN KEY (Organization_ID)
@@ -251,3 +249,15 @@ CREATE TABLE IF NOT EXISTS Refers_To (
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
+
+DELIMITER $
+CREATE TRIGGER chk_Eval_Not_Work_On BEFORE INSERT ON Evaluation 
+FOR EACH ROW
+BEGIN
+    IF ((SELECT COUNT(*) FROM Works_On WHERE Project_ID = new.Project_ID AND Researcher_ID = new.Researcher_ID) > 0) THEN 
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - A researcher cannot evaluate and work on the same project';
+    END IF;
+END$   
+DELIMITER ; 
