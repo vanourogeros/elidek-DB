@@ -1,0 +1,138 @@
+{% extends "global_layout.html" %}
+
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    
+    <div class="row" id="row">
+        <h3>ELIDEK Projects</h3>
+        <div class="col-md-12" align="center">
+            <form class="form-horizontal" name="project-form" method="POST">
+                <!-- hidden_tag returns the form's security metadata -->
+                {{ form.hidden_tag() }}
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.min_Start_Date.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.min_Start_Date(class = "form-control", placeholder="Enter name", required = False) }}
+                    {% if form.min_Start_Date.errors %}
+                    <ul class = "errors">
+                        {% for error in form.min_Start_Date.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.max_Start_Date.label(class = "form-label") }}
+                    {{ form.max_Start_Date(class = "form-control", placeholder="Enter surname", required = False) }}
+                    {% if form.max_Start_Date.errors %}
+                    <ul class = "errors">
+                        {% for error in form.max_Start_Date.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.min_End_Date.label(class = "form-label") }}
+                    {{ form.min_End_Date(class = "form-control", placeholder="Enter email", required = False) }}
+                    {% if form.min_End_Date.errors %}
+                    <ul class = "errors">
+                        {% for error in form.min_End_Date.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.max_End_Date.label(class = "form-label") }}
+                    {{ form.max_End_Date(class = "form-control", placeholder="Enter email", required = False) }}
+                    {% if form.max_End_Date.errors %}
+                    <ul class = "errors">
+                        {% for error in form.max_End_Date.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.min_Duration.label(class = "form-label") }}
+                    {{ form.min_Duration(class = "form-control", placeholder="Enter minimum duration", required = False) }}
+                    {% if form.min_Duration.errors %}
+                    <ul class = "errors">
+                        {% for error in form.min_Duration.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.max_Duration.label(class = "form-label") }}
+                    {{ form.max_Duration(class = "form-control", placeholder="Enter maximum duration", required = False) }}
+                    {% if form.max_Duration.errors %}
+                    <ul class = "errors">
+                        {% for error in form.max_Duration.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.executive.label(class = "form-label") }}
+                    {{ form.executive(class = "form-control", placeholder="Enter exec name", required = False) }}
+                    {% if form.executive.errors %}
+                    <ul class = "errors">
+                        {% for error in form.executive.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
+            </form>
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    {% include "flash_messages.html" %}
+    
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Project ID</th>
+                                <th>Name</th>
+                                <th>Summary</th>
+                                <th>Funds</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Executive Name</th>
+                                <th>Organization ID</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in projects %}
+                            <tr>
+                                <td> {{ project.Project_ID }} </td>
+                                <td> {{ project.P_Name }} </td>
+                                <td> {{ project.Summary }} </td>
+                                <td> {{ project.Project_Funds }} </td>
+                                <td> {{ project.Start_Date }} </td>
+                                <td> {{ project.End_Date }} </td>
+                                <td> {{ project.E_Name }} </td>
+                                <td> {{ project.Organization_ID }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
