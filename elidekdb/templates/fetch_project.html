@@ -1,0 +1,36 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    
+    <div class="row" id="row">
+        <h3>{{pageTitle}}</h3>
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Researcher ID</th>
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Recruitment Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for researcher in proj_researchers %}
+                            <tr>
+                                <td> {{ researcher.Researcher_ID }} </td>
+                                <td> {{ researcher.Full_Name }} </td>
+                                <td> {{ researcher.Gender }} </td>
+                                <td> {{ researcher.Recruitment_Date }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

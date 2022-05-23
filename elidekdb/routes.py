@@ -79,3 +79,25 @@ def projects_view():
     #print(programs[1])
 
     return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form)
+
+@app.route("/projects/<int:projectID>")
+def fetch_project_researchers(projectID):
+    cur = db.connection.cursor()   
+
+    query = f"""
+    SELECT XX.Researcher_ID, CONCAT(Name,' ', Surname) AS Full_Name, Gender, Recruitment_Date FROM (
+    SELECT X.Researcher_ID
+    FROM Project P INNER JOIN Works_On X
+    ON P.Project_ID = X.Project_ID
+    WHERE P.Project_ID = {projectID}
+    ) XX INNER JOIN Researcher YY 
+    ON XX.Researcher_ID = YY.Researcher_ID
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    proj_researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    #programs = cur.fetchall()
+    cur.close()
+    #print(programs[1])
+
+    return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")

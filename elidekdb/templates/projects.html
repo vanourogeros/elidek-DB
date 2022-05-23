@@ -118,7 +118,7 @@
                         <tbody>
                             {% for project in projects %}
                             <tr>
-                                <td> {{ project.Project_ID }} </td>
+                                <td> <a href = "/projects/{{ project.Project_ID }}"> {{ project.Project_ID }} </a> </td>
                                 <td> {{ project.P_Name }} </td>
                                 <td> {{ project.Summary }} </td>
                                 <td> {{ project.Project_Funds }} </td>
