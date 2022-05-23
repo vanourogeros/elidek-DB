@@ -1,1 +1,26 @@
 {% extends "global_layout.html" %}
+{% block content %}
+<div class="container" id="row-container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-4">
+            <div class="card" id="card-container-layout">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">View Programs</h4>
+                    <p class="card-text" id="paragraph">Simple Query to database to show all programs</p>
+                    <a class="btn btn-primary" id="show-btn" href="/programs">Show</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" id="card-container-layout">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">View Projects</h4>
+                    <p class="card-text" id="paragraph">Show projects -with filtering capabilities- and find researchers working at a certain project<br></p>
+                    <a class="btn btn-primary" id="show-btn" href="/projects">Show</a>
+                </div>
+            </div>
+        </div>
+    </div>>
+</div>
+{% endblock content %}
