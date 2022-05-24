@@ -3,41 +3,55 @@
 
 <div class="container">
     {% include "flash_messages.html" %}
-    
     <div class="row" id="row">
-        <h3>ELIDEK Executives</h3>
-        <div class="col-md-12" align="center">
-            <form class="form-horizontal" name="exec-form" method="POST">
-                <!-- hidden_tag returns the form's security metadata -->
-                {{ form.hidden_tag() }}
-                <div class="form-group col-sm-3 mb-3">
-                    {{ form.name.label(class = "form-label") }}
-                    {{ form.name(class = "form-control", placeholder="Enter executive name", required = False) }}
-                    {% if form.name.errors %}
-                    <ul class = "errors">
-                        {% for error in form.executive.errors %}
-                        <li class = "text-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if executive|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Executives found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Executive ID</th>
+                                    <th>Name</th>
+                                    <th>Surname</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for exec in executive %}
+                                    <tr>
+                                        <td> {{ exec.Executive_ID }} </td>
+                                        <td> {{ exec.Name }} </td>
+                                        <td> {{ exec.Surname }} </td>
+                                        <td>
+                                            <a type="button" onclick="setModalFields(this)"
+                                            data-toggle="modal" data-id="{{ exec.execID }}"
+                                            data-name="{{exec.name}}"  data-surname= "{{exec.surname}}"
+                                            data-email="{{exec.execID}}" data-bs-toggle = "modal"
+                                            data-bs-target="#editModal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                            data-id = "{{ exec.execID }}" onclick = "setDeleteModalFields(this)">
+                                                <i class = "fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
                 </div>
-                <div class="form-group col-sm-3 mb-3">
-                    {{ form.surname.label(class = "form-label") }}
-                    {{ form.surname(class = "form-control", placeholder="Enter executive surname", required = False) }}
-                    {% if form.surname.errors %}
-                    <ul class = "errors">
-                        {% for error in form.executive.errors %}
-                        <li class = "text-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
-            </form>
-    </div>
+            </div>
+        </div>
     </div>
 </div>
-
 
 <div class="container">
     {% include "flash_messages.html" %}
@@ -70,4 +84,79 @@
         </div>
     </div>
 </div>
+
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Executive</h4>
+            </div>
+            <div class="modal-body">
+                <form id="modal-form">
+                    {{ form.hidden_tag() }}
+                    <div style="text-align: center;">
+                        <input type="text" name="id" id="id" readonly>
+                        {{ form.execID(id = "Executive_ID", required = False) }}
+                        {{ form.name(id = "Name", required = False) }}
+                        {{ form.surname(id = "Surname", required = False) }}
+                    </div>
+                    <div>
+                        {% if form.execID.errors %}
+                        <ul class = "errors">
+                            {% for error in form.execID.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.surname.errors %}
+                        <ul class = "errors">
+                            {% for error in form.surname.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<script>
+
+</script>
+
+<script>
+    function setModalFields(row) {
+        document.getElementById("id").value = row.getAttribute("data-id");
+        document.getElementById("name").value = row.getAttribute("data-name");
+        document.getElementById("surname").value = row.getAttribute("data-surname");
+        document.getElementById("modal-form").action = "/executive/update/" + row.getAttribute("data-id");
+        document.getElementById("modal-form").method = "POST";
+        document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // commented line above would prevent the default behavior of the submit button, that is, sending the
+        // form data with a post request to the determined address and subsequently closing the pop-up
+    }
+
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/executive/delete/" + row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
+    }
+</script>
 {% endblock %}

@@ -24,6 +24,8 @@ class ProjectFilterForm(FlaskForm):
 
 class ExecUpdate(FlaskForm):
     
+    execID = IntegerField(label = "Executive ID", validators = [NumberRange(min=3119000, max=999999999999)])
+
     name = StringField(label = "Executive Name", validators = [Optional()])
 
     surname = StringField(label = "Executive Surname", validators = [Optional()])

@@ -112,18 +112,39 @@ def executive_view():
     FROM Executive
     """
 
-
     if(request.method == "POST" and form.validate_on_submit()):
         name = str(request.form.get('name'))
         surname = str(request.form.get('surname'))
         
-
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     executive = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
     return render_template("executive.html", executive=executive, pageTitle = "Executives Page", form = form)
+
+@app.route("/executive/update/<int:execID>", methods = ["POST"])
+def updateExec(execID):
+    """
+    Update an executive in the database, by id
+    """
+    form = ExecUpdate()
+    updateData = form.__dict__
+    if(form.validate_on_submit()):
+        query = "UPDATE executive SET name = '{}', surname = '{}' WHERE execID = {};".format(updateData['name'].data, updateData['surname'].data, execID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Executive updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getStudents"))
 
 @app.route("/projects-per-researcher")
 def projects_per_researcher_view():
