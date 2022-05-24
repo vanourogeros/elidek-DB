@@ -118,3 +118,20 @@ def executive_view():
     #print(programs[1])
 
     return render_template("executive.html", executive=executive, pageTitle = "Executives Page")
+
+@app.route("/projects-per-researcher")
+def projects_per_researcher_view():
+    cur = db.connection.cursor()   
+
+    query = """
+    SELECT *
+    FROM projects_per_researcher
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    #programs = cur.fetchall()
+    cur.close()
+    #print(programs[1])
+
+    return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page")
