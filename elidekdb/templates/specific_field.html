@@ -1,0 +1,49 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <h3>{{pageTitle}}</h3>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <form class="form-horizontal" name="field-projects-dropdown" method="POST">
+                <!-- hidden_tag returns the form's security metadata -->
+                {{ form.hidden_tag() }}
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.ResearchField.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.ResearchField(class = "form-control", placeholder="Enter name", required = False) }}
+                    {% if form.ResearchField.errors %}
+                    <ul class = "errors">
+                        {% for error in form.ResearchField.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
+            </form>
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Project ID</th>
+                                <th>Project Name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td> {{ result.Project_ID }} </td>
+                                <td> {{ result.Project_Name }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

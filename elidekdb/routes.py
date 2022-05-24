@@ -175,3 +175,35 @@ def projects_per_field_view():
     cur.close()
 
     return render_template("projects_per_field.html", results=results, pageTitle = "Projects per Research Field")
+
+@app.route("/specific-research-field", methods = ['GET', 'POST'])
+def specific_research_field():
+    form = SelectResearchField()
+    cur = db.connection.cursor()   
+    query = """
+    SELECT DISTINCT Field_ID, Field_Name
+    FROM projects_per_field
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = []
+    #print([entry for entry in cur.fetchall()])
+    form.ResearchField.choices = [entry for entry in cur.fetchall()]
+    cur.close()
+
+    if(request.method == "POST"):
+        ResearchField = str(request.form.get('ResearchField'))
+        cur = db.connection.cursor()   
+
+        query = f"""
+        SELECT Project_ID, Project_Name
+        FROM projects_per_field
+        WHERE Field_ID = {ResearchField}
+        """
+
+        cur.execute(query)
+        column_names = [i[0] for i in cur.description]
+        results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+        cur.close()
+
+    return render_template("specific_field.html", results=results, form = form, pageTitle = "Projects for chosen Research Field")

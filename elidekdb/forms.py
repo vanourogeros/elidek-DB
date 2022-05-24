@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, DateField, IntegerRangeField
+from wtforms import StringField, SubmitField, IntegerField, DateField, IntegerRangeField, SelectField
 from wtforms.validators import DataRequired, Email, Optional, NumberRange
 
 ## when passed as a parameter to a template, an object of this class will be rendered as a regular HTML form
@@ -31,3 +31,7 @@ class ExecUpdate(FlaskForm):
     surname = StringField(label = "Executive Surname", validators = [Optional()])
 
     submit = SubmitField("Update")
+
+class SelectResearchField(FlaskForm):
+    ResearchField = SelectField(u'Field name', validate_choice=False)
+    submit = SubmitField("get it bozo")
