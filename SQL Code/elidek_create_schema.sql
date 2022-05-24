@@ -264,6 +264,11 @@ DELIMITER ;
 
 DELIMITER ;
 
+-- -----------------------------------------------------
+-- View 1 Projects per Researcher
+-- -----------------------------------------------------
+
+
 CREATE VIEW projects_per_researcher AS
 SELECT Researcher.Researcher_ID,
 	     CONCAT(Researcher.Name, ' ', Researcher.Surname) AS `Full Name`,
@@ -271,4 +276,19 @@ SELECT Researcher.Researcher_ID,
        Project.Name AS `Project Name`
 FROM Researcher INNER JOIN Works_On ON Researcher.Researcher_ID=Works_On.Researcher_ID
 INNER JOIN Project on Works_On.Project_ID=Project.Project_ID
-ORDER BY Researcher.Researcher_ID; 
+ORDER BY Researcher.Researcher_ID;
+
+-- -----------------------------------------------------
+-- View 2 Projects per Field
+-- -----------------------------------------------------
+
+CREATE VIEW projects_per_field AS
+SELECT Project.Project_ID,
+       Project.Name AS `Project Name`,
+       Research_Field.Field_ID,
+       Research_Field.Name as `Field Name`
+FROM Project INNER JOIN Refers_To ON Project.Project_ID=Refers_To.Project_ID
+INNER JOIN Research_Field on Refers_To.Field_ID=Research_Field.Field_ID
+ORDER BY Field_ID;
+
+
