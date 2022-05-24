@@ -37,6 +37,11 @@ def projects_view():
     """
 
     if(request.method == "POST" and form.validate_on_submit()):
+        query = """
+        SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
+        FROM Project P INNER JOIN Executive E 
+        ON P.Executive_ID = E.Executive_ID
+        """
         min_Start_Date = str(request.form.get('min_Start_Date'))
         max_Start_Date = str(request.form.get('max_Start_Date'))
         min_End_Date = str(request.form.get('min_End_Date'))
@@ -47,16 +52,16 @@ def projects_view():
         print("form!")
         print(max_Start_Date)
         where_or_and = 'WHERE'
-        if min_Start_Date != '':
+        if min_Start_Date != '' and min_Start_Date != 'None':
             query += f'WHERE DATEDIFF(P.Start_Date, \'{min_Start_Date}\') > 0'
             where_or_and = '\n    AND'
-        if max_Start_Date != '':
+        if max_Start_Date != '' and max_Start_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.Start_Date, \'{max_Start_Date}\') < 0'
             where_or_and = '\n    AND'
-        if min_End_Date != '':
+        if min_End_Date != '' and min_End_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{min_End_Date}\') > 0'
             where_or_and = '\n    AND'
-        if max_End_Date != '':
+        if max_End_Date != '' and max_End_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{max_End_Date}\') < 0'
             where_or_and = '\n    AND'
         if min_Duration != '':
