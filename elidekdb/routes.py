@@ -139,3 +139,18 @@ def projects_per_researcher_view():
     cur.close()
 
     return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page")
+
+@app.route("/projects-per-field")
+def projects_per_field_view():
+    cur = db.connection.cursor()   
+
+    query = """
+    SELECT *
+    FROM projects_per_field
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    cur.close()
+
+    return render_template("projects_per_field.html", results=results, pageTitle = "Projects per Research Field")
