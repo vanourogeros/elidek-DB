@@ -260,4 +260,13 @@ BEGIN
            SET MESSAGE_TEXT = 'check constraint on Evaluation failed - A researcher cannot evaluate and work on the same project';
     END IF;
 END$   
-DELIMITER ; 
+DELIMITER ;
+
+CREATE VIEW projects_per_researcher AS
+SELECT Researcher.Researcher_ID,
+	     CONCAT(Researcher.Name, ' ', Researcher.Surname) AS `Full Name`,
+       Project.Project_ID,
+       Project.Name AS `Project Name`
+FROM Researcher INNER JOIN Works_On ON Researcher.Researcher_ID=Works_On.Researcher_ID
+INNER JOIN Project on Works_On.Project_ID=Project.Project_ID
+ORDER BY Researcher.Researcher_ID;
