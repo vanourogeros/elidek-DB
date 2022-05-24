@@ -114,8 +114,8 @@ def executive_view():
 
 
     if(request.method == "POST" and form.validate_on_submit()):
-        
-        executive = str(request.form.get('aaaexecutive'))
+        name = str(request.form.get('name'))
+        surname = str(request.form.get('surname'))
         
 
     cur.execute(query)

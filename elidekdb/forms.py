@@ -24,6 +24,8 @@ class ProjectFilterForm(FlaskForm):
 
 class ExecUpdate(FlaskForm):
     
-    exec_name = StringField(label = "Executive Name", validators = [Optional()])
+    name = StringField(label = "Executive Name", validators = [Optional()])
+
+    surname = StringField(label = "Executive Surname", validators = [Optional()])
 
     submit = SubmitField("Update")
