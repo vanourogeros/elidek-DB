@@ -166,6 +166,7 @@ def specific_research_field():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     results = []
+    results2 = []
     #print([entry for entry in cur.fetchall()])
     form.ResearchField.choices = [entry for entry in cur.fetchall()]
     cur.close()
@@ -175,14 +176,33 @@ def specific_research_field():
         cur = db.connection.cursor()   
 
         query = f"""
-        SELECT Project_ID, Project_Name
-        FROM projects_per_field
+        SELECT Project.Project_ID, Name
+        FROM Project INNER JOIN Refers_To
+        ON Project.Project_ID = Refers_To.Project_ID
         WHERE Field_ID = {ResearchField}
+        AND DATEDIFF(Project.End_Date, NOW()) > 0
         """
 
         cur.execute(query)
         column_names = [i[0] for i in cur.description]
         results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+        query = f"""
+        SELECT Researcher.Researcher_ID, CONCAT(Researcher.Name,' ',Researcher.Surname) AS Full_Name, Works_On.Start_Date
+        FROM Refers_To INNER JOIN Project
+        ON Project.Project_ID = Refers_To.Project_ID AND Field_ID = {ResearchField}
+        INNER JOIN Works_On
+        ON Project.Project_ID = Works_On.Project_ID
+        INNER JOIN Researcher
+        ON Works_On.Researcher_ID = Researcher.Researcher_ID
+        WHERE DATEDIFF(NOW(), Works_On.Start_Date) > 365
+        ORDER BY Researcher.Researcher_ID
+        """
+
+        cur.execute(query)
+        column_names = [i[0] for i in cur.description]
+        results2 = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
         cur.close()
 
-    return render_template("specific_field.html", results=results, form = form, pageTitle = "Projects for chosen Research Field")
+    return render_template("specific_field.html", results=results, results2 = results2, form = form, pageTitle = "Projects for chosen Research Field")
