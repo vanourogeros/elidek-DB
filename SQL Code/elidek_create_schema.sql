@@ -270,4 +270,4 @@ SELECT Researcher.Researcher_ID,
        Project.Name AS `Project Name`
 FROM Researcher INNER JOIN Works_On ON Researcher.Researcher_ID=Works_On.Researcher_ID
 INNER JOIN Project on Works_On.Project_ID=Project.Project_ID
-ORDER BY Researcher.Researcher_ID
+ORDER BY Researcher.Researcher_ID;
