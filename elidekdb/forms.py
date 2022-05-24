@@ -20,3 +20,10 @@ class ProjectFilterForm(FlaskForm):
     executive = StringField(label = "Executive Name", validators = [Optional()])
 
     submit = SubmitField("Filter")
+
+
+class ExecUpdate(FlaskForm):
+    
+    exec_name = StringField(label = "Executive Name", validators = [Optional()])
+
+    submit = SubmitField("Update")

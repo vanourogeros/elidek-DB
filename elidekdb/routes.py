@@ -102,19 +102,25 @@ def fetch_project_researchers(projectID):
 
     return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
 
-@app.route("/executive")
+@app.route("/executive", methods = ['GET', 'POST'])
 def executive_view():
     cur = db.connection.cursor()   
+    form = ExecUpdate()
 
     query = """
     SELECT *
     FROM Executive
     """
+
+
+    if(request.method == "POST" and form.validate_on_submit()):
+        
+        executive = str(request.form.get('aaaexecutive'))
+        
+
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     executive = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
-    #programs = cur.fetchall()
     cur.close()
-    #print(programs[1])
 
-    return render_template("executive.html", executive=executive, pageTitle = "Executives Page")
+    return render_template("executive.html", executive=executive, pageTitle = "Executives Page", form = form)

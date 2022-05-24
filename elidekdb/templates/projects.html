@@ -34,28 +34,6 @@
                     {% endif %}
                 </div>
                 <div class="form-group col-sm-3 mb-3">
-                    {{ form.min_End_Date.label(class = "form-label") }}
-                    {{ form.min_End_Date(class = "form-control", placeholder="Enter email", required = False) }}
-                    {% if form.min_End_Date.errors %}
-                    <ul class = "errors">
-                        {% for error in form.min_End_Date.errors %}
-                        <li class = "text-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                <div class="form-group col-sm-3 mb-3">
-                    {{ form.max_End_Date.label(class = "form-label") }}
-                    {{ form.max_End_Date(class = "form-control", placeholder="Enter email", required = False) }}
-                    {% if form.max_End_Date.errors %}
-                    <ul class = "errors">
-                        {% for error in form.max_End_Date.errors %}
-                        <li class = "text-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                <div class="form-group col-sm-3 mb-3">
                     {{ form.min_Duration.label(class = "form-label") }}
                     {{ form.min_Duration(class = "form-control", placeholder="Enter minimum duration", required = False) }}
                     {% if form.min_Duration.errors %}
@@ -79,7 +57,7 @@
                 </div>
                 <div class="form-group col-sm-3 mb-3">
                     {{ form.executive.label(class = "form-label") }}
-                    {{ form.executive(class = "form-control", placeholder="Enter exec name", required = False) }}
+                    {{ form.executive(class = "form-control", placeholder="Enter executive name", required = False) }}
                     {% if form.executive.errors %}
                     <ul class = "errors">
                         {% for error in form.executive.errors %}

@@ -1,8 +1,36 @@
 {% extends "global_layout.html" %}
 {% block content %}
+
 <div class="container">
     {% include "flash_messages.html" %}
-    <h3>Executives</h3>
+    
+    <div class="row" id="row">
+        <h3>ELIDEK Executives</h3>
+        <div class="col-md-12" align="center">
+            <form class="form-horizontal" name="exec-form" method="POST">
+                <!-- hidden_tag returns the form's security metadata -->
+                {{ form.hidden_tag() }}
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.exec_name.label(class = "form-label") }}
+                    {{ form.exec_name(class = "form-control", placeholder="Enter executive name", required = False) }}
+                    {% if form.exec_name.errors %}
+                    <ul class = "errors">
+                        {% for error in form.executive.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
+            </form>
+    </div>
+    </div>
+</div>
+
+
+<div class="container">
+    {% include "flash_messages.html" %}
+    
     <div class="row" id="row">
         <div class="col-md-12">
             <div class="card" id="card-container">
@@ -10,7 +38,7 @@
                     <table class="table table-sm table-borderless">
                         <thead>
                             <tr>
-                               <!-- <th>ID</th> -->
+                                <th>Executive ID</th>
                                 <th>Name</th>
                                 <th>Surname</th>
                                 <th></th>
@@ -19,7 +47,7 @@
                         <tbody>
                             {% for exec in executive %}
                             <tr>
-                                <!--<td> {{ exec.Executive_ID }} </td>-->
+                                <td> {{ exec.Executive_ID }} </td>
                                 <td> {{ exec.Name }} </td>
                                 <td> {{ exec.Surname }} </td>
                             </tr>
