@@ -10,7 +10,7 @@
                     <table class="table table-sm table-borderless">
                         <thead>
                             <tr>
-                                <th>Executive ID</th>
+                               <!-- <th>ID</th> -->
                                 <th>Name</th>
                                 <th>Surname</th>
                                 <th></th>
@@ -19,7 +19,7 @@
                         <tbody>
                             {% for exec in executive %}
                             <tr>
-                                <td> {{ exec.Executive_ID }} </td>
+                                <!--<td> {{ exec.Executive_ID }} </td>-->
                                 <td> {{ exec.Name }} </td>
                                 <td> {{ exec.Surname }} </td>
                             </tr>
@@ -32,47 +32,3 @@
     </div>
 </div>
 {% endblock %}
-
-<!-- Edit modal -->
-<div id="editModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Update Executive</h4>
-            </div>
-            <div class="modal-body">
-                <form class="form-model" name="project-form" method="POST">
-                    {{ form.hidden_tag() }}
-                    <div style="text-align: center;">
-                        <input type="text" name="id" id="id" readonly>
-                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ form.Name(id = "name", required = False) }}
-                        {{ form.Surname(id = "surname", required = False) }}
-                    </div>
-                    <div>
-                        {% if form.Name.errors %}
-                        <ul class = "errors">
-                            {% for error in form.Name.errors %}
-                            <li class = "alert text-danger">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                        {% if form.Surname.errors %}
-                        <ul class = "errors">
-                            {% for error in form.surname.errors %}
-                            <li class = "alert text-danger">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>
-</div>

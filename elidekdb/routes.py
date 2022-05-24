@@ -102,54 +102,19 @@ def fetch_project_researchers(projectID):
 
     return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
 
-@app.route("/executive", methods = ['GET', 'POST'])
+@app.route("/executive")
 def executive_view():
-    form = ExecutiveUpdate()
     cur = db.connection.cursor()   
 
     query = """
     SELECT *
     FROM Executive
     """
-
-    if(request.method == "POST" and form.validate_on_submit()):
-        min_Start_Date = str(request.form.get('min_Start_Date'))
-        max_Start_Date = str(request.form.get('max_Start_Date'))
-        min_End_Date = str(request.form.get('min_End_Date'))
-        max_End_Date = str(request.form.get('max_End_Date'))
-        min_Duration = str(request.form.get('min_Duration'))
-        max_Duration = str(request.form.get('max_Duration'))
-        executive = str(request.form.get('executive'))
-        print("form!")
-        print(max_Start_Date)
-        where_or_and = 'WHERE'
-        if min_Start_Date != '':
-            query += f'WHERE DATEDIFF(P.Start_Date, \'{min_Start_Date}\') > 0'
-            where_or_and = '\n    AND'
-        if max_Start_Date != '':
-            query += f'{where_or_and} DATEDIFF(P.Start_Date, \'{max_Start_Date}\') < 0'
-            where_or_and = '\n    AND'
-        if min_End_Date != '':
-            query += f'{where_or_and} DATEDIFF(P.End_Date, \'{min_End_Date}\') > 0'
-            where_or_and = '\n    AND'
-        if max_End_Date != '':
-            query += f'{where_or_and} DATEDIFF(P.End_Date, \'{max_End_Date}\') < 0'
-            where_or_and = '\n    AND'
-        if min_Duration != '':
-            query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) > {min_Duration}'
-            where_or_and = '\n    AND'
-        if max_Duration != '':
-            query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) < {max_Duration}'
-            where_or_and = '\n    AND'
-        if executive != '':
-            query += f'{where_or_and} CONCAT(E.Name, \' \',  E.Surname) = \'{executive}\''
-            where_or_and = '\n    AND'
-
-    print(query)
-
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     executive = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    #programs = cur.fetchall()
     cur.close()
+    #print(programs[1])
 
     return render_template("executive.html", executive=executive, pageTitle = "Executives Page")
