@@ -233,7 +233,7 @@ def specific_research_field():
         INNER JOIN Researcher
         ON Works_On.Researcher_ID = Researcher.Researcher_ID
         WHERE DATEDIFF(NOW(), Works_On.Start_Date) > 365
-        ORDER BY Researcher.Researcher_ID
+        GROUP BY Researcher.Researcher_ID
         """
 
         cur.execute(query)
@@ -243,3 +243,38 @@ def specific_research_field():
         cur.close()
 
     return render_template("specific_field.html", results=results, results2 = results2, form = form, pageTitle = "Projects for chosen Research Field")
+
+
+@app.route("/organizations-consecutive-year-projects")
+def consecutive_year_orgs_view():
+    cur = db.connection.cursor()   
+
+    query = """
+            select Organization.Organization_ID, Organization.Name, Organization.Acronym, X.Y AS Year, Projects_This_Year
+            from
+            (
+                select DISTINCT Organization_ID AS O, YEAR(Start_Date) as Y,
+                (
+                    select count(*)
+                    from project
+                    where YEAR(Start_Date) = Y
+                    AND Organization_ID = O
+                ) AS Projects_This_Year,
+                (
+                    select count(*)
+                    from project
+                    where YEAR(Start_Date) + 1 = Y
+                    AND Organization_ID = O
+                ) AS Projects_Last_Year
+                from project
+                having Projects_This_Year = Projects_Last_Year
+                order by O
+            ) X INNER JOIN Organization ON Organization.Organization_ID = X.O
+            """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    cur.close()
+
+    return render_template("concecutive_years.html", results=results, pageTitle = "Organizations with same number of projects in two concecutive years (more than 10 soon)")
+

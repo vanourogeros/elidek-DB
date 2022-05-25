@@ -1,0 +1,37 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <h3>{{pageTitle}}</h3>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Org. ID</th>
+                                <th>Org. Name</th>
+                                <th>Acronym</th>
+                                <th>Year</th>
+                                <th>Projects started at this and the previous year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td> {{ result.Organization_ID }} </td>
+                                <td> {{ result.Name }} </td>
+                                <td> {{ result.Acronym }} </td>
+                                <td> {{ result.Year }} </td>
+                                <td> {{ result.Projects_This_Year }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
