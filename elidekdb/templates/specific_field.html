@@ -36,7 +36,30 @@
                             {% for result in results %}
                             <tr>
                                 <td> {{ result.Project_ID }} </td>
-                                <td> {{ result.Project_Name }} </td>
+                                <td> {{ result.Name }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p></p>>
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Researcher ID</th>
+                                <th>Name</th>
+                                <th>Started working on Field Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result2 in results2 %}
+                            <tr>
+                                <td> {{ result2.Researcher_ID }} </td>
+                                <td> {{ result2.Full_Name }} </td>
+                                <td> {{ result2.Start_Date }} </td>
                             </tr>
                             {% endfor %}
                         </tbody>

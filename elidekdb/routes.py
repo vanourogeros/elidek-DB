@@ -37,6 +37,11 @@ def projects_view():
     """
 
     if(request.method == "POST" and form.validate_on_submit()):
+        query = """
+        SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
+        FROM Project P INNER JOIN Executive E 
+        ON P.Executive_ID = E.Executive_ID
+        """
         min_Start_Date = str(request.form.get('min_Start_Date'))
         max_Start_Date = str(request.form.get('max_Start_Date'))
         min_End_Date = str(request.form.get('min_End_Date'))
@@ -47,16 +52,16 @@ def projects_view():
         print("form!")
         print(max_Start_Date)
         where_or_and = 'WHERE'
-        if min_Start_Date != '':
+        if min_Start_Date != '' and min_Start_Date != 'None':
             query += f'WHERE DATEDIFF(P.Start_Date, \'{min_Start_Date}\') > 0'
             where_or_and = '\n    AND'
-        if max_Start_Date != '':
+        if max_Start_Date != '' and max_Start_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.Start_Date, \'{max_Start_Date}\') < 0'
             where_or_and = '\n    AND'
-        if min_End_Date != '':
+        if min_End_Date != '' and min_End_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{min_End_Date}\') > 0'
             where_or_and = '\n    AND'
-        if max_End_Date != '':
+        if max_End_Date != '' and max_End_Date != 'None':
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{max_End_Date}\') < 0'
             where_or_and = '\n    AND'
         if min_Duration != '':
@@ -202,6 +207,7 @@ def specific_research_field():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     results = []
+    results2 = []
     #print([entry for entry in cur.fetchall()])
     form.ResearchField.choices = [entry for entry in cur.fetchall()]
     cur.close()
@@ -211,14 +217,33 @@ def specific_research_field():
         cur = db.connection.cursor()   
 
         query = f"""
-        SELECT Project_ID, Project_Name
-        FROM projects_per_field
+        SELECT Project.Project_ID, Name
+        FROM Project INNER JOIN Refers_To
+        ON Project.Project_ID = Refers_To.Project_ID
         WHERE Field_ID = {ResearchField}
+        AND DATEDIFF(Project.End_Date, NOW()) > 0
         """
 
         cur.execute(query)
         column_names = [i[0] for i in cur.description]
         results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+        query = f"""
+        SELECT Researcher.Researcher_ID, CONCAT(Researcher.Name,' ',Researcher.Surname) AS Full_Name, Works_On.Start_Date
+        FROM Refers_To INNER JOIN Project
+        ON Project.Project_ID = Refers_To.Project_ID AND Field_ID = {ResearchField}
+        INNER JOIN Works_On
+        ON Project.Project_ID = Works_On.Project_ID
+        INNER JOIN Researcher
+        ON Works_On.Researcher_ID = Researcher.Researcher_ID
+        WHERE DATEDIFF(NOW(), Works_On.Start_Date) > 365
+        ORDER BY Researcher.Researcher_ID
+        """
+
+        cur.execute(query)
+        column_names = [i[0] for i in cur.description]
+        results2 = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
         cur.close()
 
-    return render_template("specific_field.html", results=results, form = form, pageTitle = "Projects for chosen Research Field")
+    return render_template("specific_field.html", results=results, results2 = results2, form = form, pageTitle = "Projects for chosen Research Field")
