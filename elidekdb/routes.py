@@ -373,3 +373,24 @@ def top_executives_view():
     cur.close()
 
     return render_template("top_executives.html", results=results, pageTitle = "Executives giving most money to a company")
+
+@app.route("/researchers-on-projects-without-work")
+def many_no_work_projects_view():
+    cur = db.connection.cursor()
+    query = """
+    SELECT R.Researcher_ID, CONCAT(R.Name,' ',R.Surname) AS Full_Name, COUNT(X.Project_ID) AS project_cnt FROM
+    (
+    SELECT Project_ID from Project 
+    WHERE Project_ID NOT IN (SELECT Project_ID from work_to_be_submitted)
+    ) X
+    INNER JOIN Works_On Y ON X.Project_ID = Y.Project_ID
+    INNER JOIN Researcher R ON Y.Researcher_ID = R.Researcher_ID
+    GROUP BY R.Researcher_ID
+    HAVING project_cnt >= 5
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    cur.close()
+
+    return render_template("no_work_projects.html", results=results, pageTitle = "Researchers on many projects with no work")
