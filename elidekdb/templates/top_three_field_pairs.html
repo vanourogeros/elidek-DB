@@ -1,0 +1,37 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <h3>{{pageTitle}}</h3>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Field 1 ID</th>
+                                <th>Name</th>
+                                <th>Field 2 ID</th>
+                                <th>Name</th>
+                                <th>Common project count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td> {{ result.Field_1 }} </td>
+                                <td> {{ result.Name_1 }} </td>
+                                <td> {{ result.Field_2 }} </td>
+                                <td> {{ result.Name_2 }} </td>
+                                <td> {{ result.pair_count }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
