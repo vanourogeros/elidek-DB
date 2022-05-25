@@ -116,10 +116,6 @@ def executive_view():
     SELECT *
     FROM Executive
     """
-
-    if(request.method == "POST" and form.validate_on_submit()):
-        name = str(request.form.get('name'))
-        surname = str(request.form.get('surname'))
         
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
@@ -132,10 +128,9 @@ def executive_view():
 def updateExec(execID):
     
     form = ExecUpdate()
-    updateData = form.__dict__
     if(form.validate_on_submit()):
-        query = """
-        UPDATE executive SET Name = 'name', Surname = 'surname' WHERE Executive_ID = {execID}
+        query = f"""
+        UPDATE executive SET Name = {form.name}, Surname = {form.surname} WHERE Executive_ID = {execID}
         """
         try:
             cur = db.connection.cursor()
@@ -149,22 +144,23 @@ def updateExec(execID):
         for category in form.errors.values():
             for error in category:
                 flash(error, "danger")
-    return redirect(url_for("executive_view"))
+    return redirect('/executive')
 
-@app.route("/executive/delete/<int:execID>", methods = ["POST"])
-def deleteExec(execID):
+@app.route('/executive/delete/<int:execID>')
+def deletecar(execID):
+    conn = db.connection
+    cur = conn.cursor()
     query = f"""
-    DELETE FROM executive WHERE Executive_ID = {execID}
-    """
+        DELETE FROM executive WHERE Executive_ID =  {execID}
+        """
     try:
-        cur = db.connection.cursor()
         cur.execute(query)
-        db.connection.commit()
-        cur.close()
-        flash("Executive deleted successfully", "primary")
+        conn.commit()
+        conn.close()
     except Exception as e:
         flash(str(e), "danger")
-    return redirect(url_for("executive_view"))
+
+    return redirect('/executive')
 
 @app.route("/projects-per-researcher")
 def projects_per_researcher_view():

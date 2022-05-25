@@ -3,6 +3,9 @@
 
 <div class="container">
     {% include "flash_messages.html" %}
+    <h3>ELIDEK Executives</h3>
+    <button type="button" class="btn btn-success float-end"
+    data-toggle="modal" data-target="#mymodal">Add executive</button> 
     <div class="row" id="row">
         <div class="col-md-12">
             <div class="card" id="card-container">
@@ -10,13 +13,15 @@
                 {% if executive|length == 0 %}
                     <h1 style="margin-top: 5rem;">No Executives found!</h1>
                 {% else %}
-                    <div class="table-responsive">
-                        <table class="table">
+                    <div class="table-responsive"> 
+                        <table class="table table-borderless">
+                            
                             <thead>
                                 <tr>
                                     <th>Executive ID</th>
                                     <th>Name</th>
                                     <th>Surname</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -27,13 +32,14 @@
                                         <td> {{ exec.Surname }} </td>
                                         <td>
                                             <a type="button" onclick="setModalFields(this)"
-                                            data-toggle="modal" data-id="{{ exec.execID }}"
-                                            data-name="{{exec.name}}"  data-surname= "{{exec.surname}}"
-                                            data-email="{{exec.execID}}" data-bs-toggle = "modal"
+                                            data-toggle="modal" data-id="{{ exec.Executive_ID }}"
+                                            data-name="mixalhs"  data-surname= "lulakhs"
+                                            data-bs-toggle = "modal"
                                             data-bs-target="#editModal">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         </td>
+                                        <td> <a href = "/executive/update/{{ exec.Executive_ID }}"> {{ exec.Executive_ID }} </a> </td>
                                         <td>
                                             <button style = "all: unset; cursor: pointer;" type = "button"
                                             data-bs-toggle = "modal" data-bs-target = "#deleteModal"
@@ -44,99 +50,28 @@
                                     </tr>
                                 {% endfor %}
                             </tbody>
+                            
                         </table>
                     </div>
                 {% endif %}
+                <div id="mymodal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <h4 class="modal-title">Add executive</h4>
+                        </div>
+                
+                    </div>
+                
+                </div>
                 </div>
             </div>
         </div>
+        
     </div>
+   
+    
 </div>
 
 
-<div id="editModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Update Executive</h4>
-            </div>
-            <div class="modal-body">
-                <form id="modal-form">
-                    {{ form.hidden_tag() }}
-                    <div style="text-align: center;">
-                        <input type="text" name="id" id="id" readonly>
-                        {{ form.name(id = "Name", required = False) }}
-                        {{ form.surname(id = "Surname", required = False) }}
-                    </div>
-                    <div>
-                        {% if form.name.errors %}
-                        <ul class = "errors">
-                            {% for error in form.name.errors %}
-                            <li class = "alert text-danger">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                        {% if form.surname.errors %}
-                        <ul class = "errors">
-                            {% for error in form.surname.errors %}
-                            <li class = "alert text-danger">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
 
-    </div>
-</div>
-
-<!-- Delete modal -->
-<div class = "modal fade" id="deleteModal">
-    <div class = "modal-dialog">
-        <div class = "modal-content">
-            <div class = "modal-header">
-                <h5 class = "modal-title" id = "deleteModalLabel">Delete executive</h5>
-                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
-            </div>
-            <div class = "modal-body">
-                All associated grades will be deleted too. Are you sure?
-            </div>
-            <div class = "modal-footer">
-                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
-                <form id = "delete-modal-form">
-                    <input type = "submit" class = "btn btn-danger" value = "Delete">
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script>
-
-</script>
-
-<script>
-    function setModalFields(row) {
-        document.getElementById("id").value = row.getAttribute("data-id");
-        document.getElementById("name").value = row.getAttribute("data-name");
-        document.getElementById("surname").value = row.getAttribute("data-surname");
-        document.getElementById("modal-form").action = "/executive/update/" + row.getAttribute("data-id");
-        document.getElementById("modal-form").method = "POST";
-        document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
-        // commented line above would prevent the default behavior of the submit button, that is, sending the
-        // form data with a post request to the determined address and subsequently closing the pop-up
-    }
-
-    function setDeleteModalFields(row) {
-        document.getElementById("delete-modal-form").action = "/executive/delete/" + row.getAttribute("data-id");
-        document.getElementById("delete-modal-form").method = "POST";
-    }
-</script>
 {% endblock %}
