@@ -53,37 +53,6 @@
     </div>
 </div>
 
-<div class="container">
-    {% include "flash_messages.html" %}
-    
-    <div class="row" id="row">
-        <div class="col-md-12">
-            <div class="card" id="card-container">
-                <div class="card-body" id="card">
-                    <table class="table table-sm table-borderless">
-                        <thead>
-                            <tr>
-                                <th>Executive ID</th>
-                                <th>Name</th>
-                                <th>Surname</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for exec in executive %}
-                            <tr>
-                                <td> {{ exec.Executive_ID }} </td>
-                                <td> {{ exec.Name }} </td>
-                                <td> {{ exec.Surname }} </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div id="editModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -97,18 +66,10 @@
                     {{ form.hidden_tag() }}
                     <div style="text-align: center;">
                         <input type="text" name="id" id="id" readonly>
-                        {{ form.execID(id = "Executive_ID", required = False) }}
                         {{ form.name(id = "Name", required = False) }}
                         {{ form.surname(id = "Surname", required = False) }}
                     </div>
                     <div>
-                        {% if form.execID.errors %}
-                        <ul class = "errors">
-                            {% for error in form.execID.errors %}
-                            <li class = "alert text-danger">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
                         {% if form.name.errors %}
                         <ul class = "errors">
                             {% for error in form.name.errors %}
@@ -135,7 +96,26 @@
     </div>
 </div>
 
-
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete executive</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                All associated grades will be deleted too. Are you sure?
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>

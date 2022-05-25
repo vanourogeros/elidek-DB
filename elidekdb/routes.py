@@ -125,13 +125,13 @@ def executive_view():
 
 @app.route("/executive/update/<int:execID>", methods = ["POST"])
 def updateExec(execID):
-    """
-    Update an executive in the database, by id
-    """
+    
     form = ExecUpdate()
     updateData = form.__dict__
     if(form.validate_on_submit()):
-        query = "UPDATE executive SET name = '{}', surname = '{}' WHERE execID = {};".format(updateData['name'].data, updateData['surname'].data, execID)
+        query = """
+        UPDATE executive SET Name = 'name', Surname = 'surname' WHERE Executive_ID = {execID}
+        """
         try:
             cur = db.connection.cursor()
             cur.execute(query)
@@ -144,7 +144,22 @@ def updateExec(execID):
         for category in form.errors.values():
             for error in category:
                 flash(error, "danger")
-    return redirect(url_for("getStudents"))
+    return redirect(url_for("executive_view"))
+
+@app.route("/executive/delete/<int:execID>", methods = ["POST"])
+def deleteExec(execID):
+    query = f"""
+    DELETE FROM executive WHERE Executive_ID = {execID}
+    """
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Executive deleted successfully", "primary")
+    except Exception as e:
+        flash(str(e), "danger")
+    return redirect(url_for("executive_view"))
 
 @app.route("/projects-per-researcher")
 def projects_per_researcher_view():
