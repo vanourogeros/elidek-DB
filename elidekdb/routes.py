@@ -237,7 +237,7 @@ def specific_research_field():
         INNER JOIN Researcher
         ON Works_On.Researcher_ID = Researcher.Researcher_ID
         WHERE DATEDIFF(NOW(), Works_On.Start_Date) > 365
-        ORDER BY Researcher.Researcher_ID
+        GROUP BY Researcher.Researcher_ID
         """
 
         cur.execute(query)
