@@ -27,9 +27,9 @@
                                         <td> {{ exec.Surname }} </td>
                                         <td>
                                             <a type="button" onclick="setModalFields(this)"
-                                            data-toggle="modal" data-id="{{ exec.execID }}"
-                                            data-name="{{exec.name}}"  data-surname= "{{exec.surname}}"
-                                            data-email="{{exec.execID}}" data-bs-toggle = "modal"
+                                            data-toggle="modal" data-id="{{ exec.Executive_ID }}"
+                                            data-name="{{exec.Name}}"  data-surname= "{{exec.Surname}}"
+                                            data-email="{{exec.Executive_ID}}" data-bs-toggle = "modal"
                                             data-bs-target="#editModal">
                                                 <i class="fa fa-edit"></i>
                                             </a>
@@ -37,7 +37,7 @@
                                         <td>
                                             <button style = "all: unset; cursor: pointer;" type = "button"
                                             data-bs-toggle = "modal" data-bs-target = "#deleteModal"
-                                            data-id = "{{ exec.execID }}" onclick = "setDeleteModalFields(this)">
+                                            data-id = "{{ exec.Executive_ID }}" onclick = "setDeleteModalFields(this)">
                                                 <i class = "fa fa-trash"></i>
                                             </button>
                                         </td>
