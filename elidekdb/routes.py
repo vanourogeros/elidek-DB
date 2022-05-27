@@ -228,7 +228,7 @@ def updateExec(execID):
                 flash(error, "danger")
     return redirect('/executive')
 
-@app.route("/executive/insert", methods = ["GET","POST"])
+@app.route("/executive/create", methods = ["GET","POST"])
 def insertExec():
     form = ExecUpdate()
     name = str(request.form.get('name'))
@@ -248,13 +248,13 @@ def insertExec():
             cur.execute(query2)
             db.connection.commit()
             cur.close()
-            flash("Executive inserted successfully", "success")
+            flash("Executive created successfully", "success")
 
         except Exception as e: ## OperationalError
             flash(str(e), "danger")
 
     ## else, response for GET request
-    return render_template("insert_executive.html", pageTitle = "Insert Executive", form = form)
+    return render_template("create_executive.html", pageTitle = "Create Executive", form = form)
 
 @app.route('/executive/delete/<int:execID>', methods = ["POST"])
 def deleteexec(execID):
