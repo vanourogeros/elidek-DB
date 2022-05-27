@@ -37,3 +37,9 @@ class ExecUpdate(FlaskForm):
 class SelectResearchField(FlaskForm):
     ResearchField = SelectField(u'Field name', validate_choice=False)
     submit = SubmitField("get it bozo")
+
+class ProjUpdate(FlaskForm):
+    projID = IntegerField(label = "Project ID")
+    name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    summary = StringField(label = "Project Summary", validators = [DataRequired(message = "Name is a required field.")])
+    submit = SubmitField("Update")

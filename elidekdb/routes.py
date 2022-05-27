@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
-from numpy import True_
 from elidekdb import app, db ## initially created by __init__.py, need to be used here
 from elidekdb.forms import *
 
@@ -104,6 +103,7 @@ def programUpdate(progID):
 @app.route("/projects", methods = ['GET', 'POST'])
 def projects_view():
     form = ProjectFilterForm()
+    form2 = ProjUpdate()
     cur = db.connection.cursor()   
 
     query = """
@@ -157,8 +157,35 @@ def projects_view():
     #print(projects)
     #programs = cur.fetchall()
     cur.close()
+    return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form, form2 = form2)
 
-    return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form)
+@app.route("/projects/update/<int:projID>", methods = ["POST"])
+def updateProject(projID):
+    
+    form2 = ProjUpdate()
+    cur = db.connection.cursor() 
+  
+    name = str(request.form.get('name'))
+    summary = str(request.form.get('summary'))
+    if(form2.validate_on_submit()):
+        
+        query = f"""
+        UPDATE project SET Name = '{name}', Summary = '{summary}' WHERE Project_ID = {str(projID)}
+        """
+        print(query)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form2.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("projects_view"))  
 
 @app.route("/projects/<int:projectID>")
 def fetch_project_researchers(projectID):

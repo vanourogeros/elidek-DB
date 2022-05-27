@@ -3,14 +3,7 @@
 
 <div class="container">
     {% include "flash_messages.html" %}
-    <h3>ELIDEK Executives</h3>
-        <a href='/executive/insert'>
-            <button class="btn btn-success float-end">
-                Add executive
-            </button>
-        </a>
     <div class="row" id="row">
-        
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">
@@ -58,11 +51,6 @@
             </div>
         </div>
     </div>
-    <a href='/executive/insert'>
-        <button class="btn btn-success float-end">
-            Add executive
-        </button>
-    </a>
 </div>
 
 
@@ -117,7 +105,7 @@
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
             <div class = "modal-body">
-                <h2>Warning!</h2> If the executive funds a project it will be deleted
+                All associated grades will be deleted too. Are you sure?
             </div>
             <div class = "modal-footer">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>

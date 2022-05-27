@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS  Project (
   CONSTRAINT fk_Manages
     FOREIGN KEY (Executive_ID)
     REFERENCES Executive (Executive_ID)
-    ON DELETE RESTRICT
+    ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT fk_Project_Program
     FOREIGN KEY (Program_Name)
