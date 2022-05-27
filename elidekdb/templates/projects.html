@@ -86,6 +86,11 @@
                         <input type="text" name="id" id="id" readonly>
                         {{ form2.name(id = "Name", required = False) }}
                         {{ form2.summary(id = "Summary", required = False) }}
+                        {{ form2.funds(id = "Funds", required = False) }}
+                        {{ form2.executive(id = "Executive", required = False) }}
+                        {{ form2.start_date(id = "Start Date", required = False) }}
+                        {{ form2.end_date(id = "End Date", required = False) }}
+                        {{ form2.organization(id = "Organization", required = False) }}
                     </div>
                     <div>
                         {% if form2.name.errors %}
@@ -98,6 +103,41 @@
                         {% if form2.summary.errors %}
                         <ul class = "errors">
                             {% for error in form2.summary.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.funds.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.funds.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.executive.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.executive.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.start_date.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.start_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.end_date.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.end_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.organization.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.organization.errors %}
                             <li class = "alert text-danger">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -149,6 +189,9 @@
                                     <a type="button" onclick="setModalFields(this)"
                                     data-toggle="modal" data-id="{{ project.Project_ID }}"
                                     data-name="{{project.P_Name}}"  data-summary= "{{project.Summary}}"
+                                    data-funds = "{{project.Project_Funds}}" data-start-date = "{{project.Start_Date}}"
+                                    data-end-date = "{{project.End_Date}}" data-executive = "{{project.E_Name}}"
+                                    data-organization = "{{project.Organization_ID}}"
                                     data-bs-toggle = "modal"
                                     data-bs-target="#editModal">
                                         <i class="fa fa-edit"></i>
@@ -172,6 +215,11 @@
         document.getElementById("id").value = row.getAttribute("data-id");
         document.getElementById("Name").value = row.getAttribute("data-name");
         document.getElementById("Summary").value = row.getAttribute("data-summary");
+        document.getElementById("Funds").value = row.getAttribute("data-funds");
+        document.getElementById("Executive").value = row.getAttribute("data-executive");
+        document.getElementById("Start Date").value = row.getAttribute("data-start-date");
+        document.getElementById("End Date").value = row.getAttribute("data-end-date");
+        document.getElementById("Organization").value = row.getAttribute("data-organization");
         document.getElementById("modal-form").action = "/projects/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});

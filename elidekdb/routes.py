@@ -105,6 +105,11 @@ def projects_view():
     form = ProjectFilterForm()
     form2 = ProjUpdate()
     cur = db.connection.cursor()   
+    cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
+    form2.executive.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, Name FROM Organization")
+    form2.organization.choices = [entry for entry in cur.fetchall()]
+
 
     query = """
     SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
@@ -164,13 +169,27 @@ def updateProject(projID):
     print("awoogra!!!")
     form2 = ProjUpdate()
     cur = db.connection.cursor() 
-  
+    cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
+    form2.executive.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, Name FROM Organization")
+    form2.organization.choices = [entry for entry in cur.fetchall()]
+
     name = str(request.form.get('name'))
     summary = str(request.form.get('summary'))
+    funds = str(request.form.get('funds'))
+    executive = str(request.form.get('executive'))
+    start_date = str(request.form.get('start_date'))
+    end_date = str(request.form.get('end_date'))
+    organization = str(request.form.get('organization'))
+    print(name,summary,funds,executive,start_date,end_date,organization)
     if(form2.validate_on_submit()):
         
         query = f"""
-        UPDATE project SET Name = '{name}', Summary = '{summary}' WHERE Project_ID = {str(projID)}
+        UPDATE project SET Name = '{name}', Summary = '{summary}',
+        Project_Funds = '{funds}', Start_Date = '{start_date}',
+        End_Date = '{end_date}', Organization_ID = {organization},
+        Executive_ID = {executive}
+        WHERE Project_ID = {str(projID)}
         """
         print(query)
         try:
