@@ -114,6 +114,29 @@
     </div>
 </div>
 
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete project</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Are you sure?
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <div class="container">
     
     <div class="row" id="row">
@@ -154,6 +177,13 @@
                                         <i class="fa fa-edit"></i>
                                     </a>
                                 </td>
+                                <td>
+                                    <button style = "all: unset; cursor: pointer;" type = "button"
+                                    data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                    data-id = "{{ project.Project_ID }}" onclick = "setDeleteModalFields(this)">
+                                        <i class = "fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -177,6 +207,10 @@
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
         // commented line above would prevent the default behavior of the submit button, that is, sending the
         // form data with a post request to the determined address and subsequently closing the pop-up
+    }
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/projects/delete/" + row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
     }
 
 </script>

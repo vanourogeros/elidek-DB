@@ -29,7 +29,7 @@ class ProjectFilterForm(FlaskForm):
 
 
 class ExecUpdate(FlaskForm):
-    execID = IntegerField(label = "Executive ID", validators = [Optional()])
+    execID = IntegerField(label = "Executive ID", validators = [Optional()] )
     name = StringField(label = "Executive Name", validators = [DataRequired(message = "Name is a required field.")])
     surname = StringField(label = "Executive Surname", validators = [DataRequired(message = "Name is a required field.")])
     submit = SubmitField("Create") #it is used for executive insertion
