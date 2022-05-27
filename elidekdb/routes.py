@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
+from numpy import True_
 from elidekdb import app, db ## initially created by __init__.py, need to be used here
 from elidekdb.forms import *
 
@@ -7,11 +8,11 @@ from elidekdb.forms import *
 def index():
     return render_template("landing.html", pageTitle = "Landing Page")
 
-
+    
 @app.route("/programs")
 def programs_view():
     cur = db.connection.cursor()   
-
+    form = ProgramUpdate()
     query = """
     SELECT *
     FROM Program
@@ -23,12 +24,86 @@ def programs_view():
     cur.close()
     #print(programs[1])
 
-    return render_template("programs.html", programs=programs, pageTitle = "Programs Page")
+    return render_template("programs.html", programs=programs, pageTitle = "Programs Page", form=form)
+
+
+@app.route("/programs/delete/<int:Name>", methods = ["POST"])
+def deleteProgram(Name):
+    conn = db.connection
+    cur = conn.cursor()
+    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
+    query = f"""
+        DELETE FROM program WHERE Name =  {str(Name)}
+        """
+    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
+    try:
+        cur.execute(query1)
+        conn.commit()
+        cur.execute(query)
+        conn.commit()
+        cur.execute(query2)
+        conn.commit()
+        conn.close()
+        flash("Program deleted successfully", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect('/programs')
+
+
+@app.route("/programs/insert/<int:Name>", methods = ["POST"])
+def newProgram(Name):
+    cur = db.connection.cursor()   
+    form = ProgramUpdate()
+    name = str(request.form.get('name'))
+    sector = str(request.form.get('sector'))
+    if(form.validate_on_submit()):
+        query = f"""
+        INSERT program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Name = {str(Name)}
+        """
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Program updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect('/programs')
+
+@app.route("/programs/update/<int:progID>", methods = ["POST"])
+def programUpdate(progID):
+    cur = db.connection.cursor()   
+    form = ProgramUpdate()
+    name = str(request.form.get('name'))
+    sector = str(request.form.get('sector'))
+
+    if(form.validate_on_submit()):
+        query = f"""
+        UPDATE program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Executive_ID = {str(progID)}
+        """
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Program updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect('/programs')
+
 
 @app.route("/projects", methods = ['GET', 'POST'])
 def projects_view():
     form = ProjectFilterForm()
-    form2 = ProjUpdate()
     cur = db.connection.cursor()   
 
     query = """
@@ -82,37 +157,8 @@ def projects_view():
     #print(projects)
     #programs = cur.fetchall()
     cur.close()
-    #print(programs[1])
 
-    return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form, form2 = form2)
-
-@app.route("/projects/update/<int:projID>", methods = ["POST"])
-def updateProject(projID):
-    
-    form2 = ProjUpdate()
-    cur = db.connection.cursor() 
-  
-    name = str(request.form.get('name'))
-    summary = str(request.form.get('summary'))
-    if(form2.validate_on_submit()):
-        
-        query = f"""
-        UPDATE project SET Name = '{name}', Summary = '{summary}' WHERE Project_ID = {str(projID)}
-        """
-        print(query)
-        try:
-            cur = db.connection.cursor()
-            cur.execute(query)
-            db.connection.commit()
-            cur.close()
-            flash("Updated successfully", "success")
-        except Exception as e:
-            flash(str(e), "danger")
-    else:
-        for category in form2.errors.values():
-            for error in category:
-                flash(error, "danger")
-    return redirect(url_for("projects_view"))  
+    return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form)
 
 @app.route("/projects/<int:projectID>")
 def fetch_project_researchers(projectID):
@@ -130,9 +176,7 @@ def fetch_project_researchers(projectID):
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     proj_researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
-    #programs = cur.fetchall()
     cur.close()
-    #print(programs[1])
 
     return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
 
@@ -159,14 +203,12 @@ def executive_view():
 
     return render_template("executive.html", executive=executive, pageTitle = "Executives Page", form = form)
 
-
 @app.route("/executive/update/<int:execID>", methods = ["POST"])
 def updateExec(execID):
     print("awoogra!!!!")
     form = ExecUpdate()
     name = str(request.form.get('name'))
     surname = str(request.form.get('surname'))
-    updateData = form.__dict__
     if(form.validate_on_submit()):
         query = f"""
         UPDATE executive SET Name = '{name}', Surname = '{surname}' WHERE Executive_ID = {str(execID)}
@@ -184,24 +226,58 @@ def updateExec(execID):
         for category in form.errors.values():
             for error in category:
                 flash(error, "danger")
-    return redirect(url_for("executive_view"))
+    return redirect('/executive')
 
+@app.route("/executive/create", methods = ["GET","POST"])
+def insertExec():
+    form = ExecUpdate()
+    name = str(request.form.get('name'))
+    surname = str(request.form.get('surname'))
+    exec_id = 0
+    if(request.method == "POST" and form.validate_on_submit()):
+        query1 =  """SELECT MAX(Executive_ID) FROM executive"""
+        
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query1)
+            temp = cur.fetchall()
+            exec_id = int(temp[0][0]+1)
+            query2 = f"""
+            INSERT INTO executive (Executive_ID, Name, Surname) VALUES ('{exec_id}', '{name}', '{surname}')
+            """
+            cur.execute(query2)
+            db.connection.commit()
+            cur.close()
+            flash("Executive created successfully", "success")
 
+        except Exception as e: ## OperationalError
+            flash(str(e), "danger")
 
-@app.route("/executive/delete/<int:execID>", methods = ["POST"])
-def deleteExec(execID):
+    ## else, response for GET request
+    return render_template("create_executive.html", pageTitle = "Create Executive", form = form)
+
+@app.route('/executive/delete/<int:execID>', methods = ["POST"])
+def deleteexec(execID):
+    conn = db.connection
+    cur = conn.cursor()
+    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
-    DELETE FROM executive WHERE Executive_ID = {execID}
-    """
+        DELETE FROM executive WHERE Executive_ID =  {execID}
+        """
+    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
-        cur = db.connection.cursor()
+        cur.execute(query1)
+        conn.commit()
         cur.execute(query)
-        db.connection.commit()
-        cur.close()
-        flash("Executive deleted successfully", "primary")
+        conn.commit()
+        cur.execute(query2)
+        conn.commit()
+        conn.close()
+        flash("Executive deleted successfully", "success")
     except Exception as e:
         flash(str(e), "danger")
-    return redirect(url_for("executive_view"))
+
+    return redirect('/executive')
 
 @app.route("/projects-per-researcher")
 def projects_per_researcher_view():
