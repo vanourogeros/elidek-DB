@@ -252,6 +252,7 @@ def updateExec(execID):
 @app.route("/executive/create", methods = ["GET","POST"])
 def insertExec():
     form = ExecUpdate()
+    id = request.form.get('execID')
     name = str(request.form.get('name'))
     surname = str(request.form.get('surname'))
     exec_id = 0
@@ -260,9 +261,13 @@ def insertExec():
         
         try:
             cur = db.connection.cursor()
-            cur.execute(query1)
-            temp = cur.fetchall()
-            exec_id = int(temp[0][0]+1)
+            if (id == '0' or id == ''):
+
+                cur.execute(query1)
+                temp = cur.fetchall()
+                exec_id = int(temp[0][0]+1)
+            else:
+                exec_id = id
             query2 = f"""
             INSERT INTO executive (Executive_ID, Name, Surname) VALUES ('{exec_id}', '{name}', '{surname}')
             """

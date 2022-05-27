@@ -4,13 +4,24 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <div class="row" id="row">
+        <h3>
+            ELIDEK Executives
+            <a href='/executive/create'>
+                <button class="btn btn-success float-end">
+                    Add executive
+                </button>
+            </a>
+        </h3>
         <div class="col-md-12">
+            
             <div class="card" id="card-container">
+                
                 <div class="card-body" id="card">
                 {% if executive|length == 0 %}
                     <h1 style="margin-top: 5rem;">No Executives found!</h1>
                 {% else %}
                     <div class="table-responsive">
+                        
                         <table class="table">
                             <thead>
                                 <tr>
@@ -48,9 +59,17 @@
                     </div>
                 {% endif %}
                 </div>
+                
             </div>
+            <a href='/executive/create'>
+                <button class="btn btn-success float-end">
+                    Add executive
+                </button>
+            </a>
         </div>
+        
     </div>
+   
 </div>
 
 
@@ -105,7 +124,7 @@
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
             <div class = "modal-body">
-                All associated grades will be deleted too. Are you sure?
+                <h3>WARNING!</h3>All associated projects will be deleted
             </div>
             <div class = "modal-footer">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
