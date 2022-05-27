@@ -39,13 +39,14 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         </td>
-                                        <td> <a href = "/executive/update/{{ exec.Executive_ID }}"> {{ exec.Executive_ID }} </a> </td>
+                                        <td> <a href = "/executive/update/{{ exec.Executive_ID }}">Update</a> </td>
                                         <td>
                                             <button style = "all: unset; cursor: pointer;" type = "button"
                                             data-bs-toggle = "modal" data-bs-target = "#deleteModal"
                                             data-id = "{{ exec.execID }}" onclick = "setDeleteModalFields(this)">
                                                 <i class = "fa fa-trash"></i>
                                             </button>
+                                        <td><a href="/executive/update/{{ exec.Executive_ID }}">Delete</a></td>
                                         </td>
                                     </tr>
                                 {% endfor %}
