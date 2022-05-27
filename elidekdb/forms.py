@@ -4,6 +4,12 @@ from wtforms.validators import DataRequired, Email, Optional, NumberRange
 
 ## when passed as a parameter to a template, an object of this class will be rendered as a regular HTML form
 ## with the additional restrictions specified for each field
+
+class ProgramUpdate(FlaskForm):
+    name = StringField(label = "Executive Name", validators = [DataRequired(message = "Name is a required field.")])
+    sector = SelectField(u'Field name', validate_choice=False)
+    submit = SubmitField("Update")
+
 class ProjectFilterForm(FlaskForm):
     min_Start_Date = DateField(label = "Start Date From:", validators = [Optional()])
 
@@ -23,10 +29,10 @@ class ProjectFilterForm(FlaskForm):
 
 
 class ExecUpdate(FlaskForm):
-    execID = IntegerField(label = "Executive ID")
+    #execID = IntegerField(label = "Executive ID")
     name = StringField(label = "Executive Name", validators = [DataRequired(message = "Name is a required field.")])
     surname = StringField(label = "Executive Surname", validators = [DataRequired(message = "Name is a required field.")])
-    submit = SubmitField("Update")
+    submit = SubmitField("Create") #it is used for executive insertion
 
 class SelectResearchField(FlaskForm):
     ResearchField = SelectField(u'Field name', validate_choice=False)

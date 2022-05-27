@@ -20,6 +20,21 @@
                             <tr>
                                 <td> {{ program.Name }} </td>
                                 <td> {{ program.ELIDEK_Sector }} </td>
+                                <td>
+                                    <a type="button" onclick="setModalFields(this)"
+                                    data-toggle="modal" data-name="{{ program.Name }}"
+                                    data-bs-toggle = "modal"
+                                    data-bs-target="#editModal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button style = "all: unset; cursor: pointer;" type = "button"
+                                    data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                    data-name = "{{ program.Name }}" onclick = "setDeleteModalFields(this)">
+                                        <i class = "fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -29,4 +44,80 @@
         </div>
     </div>
 </div>
+
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Program</h4>
+            </div>
+            <div class="modal-body">
+                <form id="modal-form" method = "POST">
+                    {{ form.hidden_tag() }}
+                    <div style="text-align: center;">
+                        <input type="text" name="id" id="id" readonly>
+                        {{ form.name(id = "Name", required = False) }}
+                        {{ form.sector(id = "ELIDEK_Sector", required = False) }}
+                    </div>
+                    <div>
+                        {% if form.name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.sector.errors %}
+                        <ul class = "errors">
+                            {% for error in form.sector.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete program</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                <h2>Warning!</h2> All projects associated with this program will be deleted
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setModalFields(row) {
+        document.getElementById("id").value = row.getAttribute("data-name");
+        document.getElementById("modal-form").action = "/programs/update/" + document.getElementById("id").value;
+        document.getElementById("modal-form").method = "POST";
+    }
+
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/programs/delete/" + row.getAttribute("data-name");
+        document.getElementById("delete-modal-form").method = "POST";
+    }
+</script>
 {% endblock %}

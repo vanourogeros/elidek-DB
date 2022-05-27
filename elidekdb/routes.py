@@ -8,11 +8,11 @@ from elidekdb.forms import *
 def index():
     return render_template("landing.html", pageTitle = "Landing Page")
 
-
+    
 @app.route("/programs")
 def programs_view():
     cur = db.connection.cursor()   
-
+    form = ProgramUpdate()
     query = """
     SELECT *
     FROM Program
@@ -24,7 +24,82 @@ def programs_view():
     cur.close()
     #print(programs[1])
 
-    return render_template("programs.html", programs=programs, pageTitle = "Programs Page")
+    return render_template("programs.html", programs=programs, pageTitle = "Programs Page", form=form)
+
+
+@app.route("/programs/delete/<int:Name>", methods = ["POST"])
+def deleteProgram(Name):
+    conn = db.connection
+    cur = conn.cursor()
+    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
+    query = f"""
+        DELETE FROM program WHERE Name =  {str(Name)}
+        """
+    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
+    try:
+        cur.execute(query1)
+        conn.commit()
+        cur.execute(query)
+        conn.commit()
+        cur.execute(query2)
+        conn.commit()
+        conn.close()
+        flash("Program deleted successfully", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect('/programs')
+
+
+@app.route("/programs/insert/<int:Name>", methods = ["POST"])
+def newProgram(Name):
+    cur = db.connection.cursor()   
+    form = ProgramUpdate()
+    name = str(request.form.get('name'))
+    sector = str(request.form.get('sector'))
+    if(form.validate_on_submit()):
+        query = f"""
+        INSERT program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Name = {str(Name)}
+        """
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Program updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect('/programs')
+
+@app.route("/programs/update/<int:progID>", methods = ["POST"])
+def programUpdate(progID):
+    cur = db.connection.cursor()   
+    form = ProgramUpdate()
+    name = str(request.form.get('name'))
+    sector = str(request.form.get('sector'))
+
+    if(form.validate_on_submit()):
+        query = f"""
+        UPDATE program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Executive_ID = {str(progID)}
+        """
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Program updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect('/programs')
+
 
 @app.route("/projects", methods = ['GET', 'POST'])
 def projects_view():
@@ -82,7 +157,6 @@ def projects_view():
     #print(projects)
     #programs = cur.fetchall()
     cur.close()
-    #print(programs[1])
 
     return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form)
 
@@ -102,9 +176,7 @@ def fetch_project_researchers(projectID):
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     proj_researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
-    #programs = cur.fetchall()
     cur.close()
-    #print(programs[1])
 
     return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
 
@@ -164,14 +236,15 @@ def insertExec():
     exec_id = 0
     if(request.method == "POST" and form.validate_on_submit()):
         query1 =  """SELECT MAX(Executive_ID) FROM executive"""
-        query2 = f"""
-        INSERT INTO executive (Executive_ID, Name, Surname) VALUES ('{exec_id}', '{name}', '{surname}')
-        """
+        
         try:
             cur = db.connection.cursor()
             cur.execute(query1)
             temp = cur.fetchall()
-            exec_id = int(temp[0][0]) +1
+            exec_id = int(temp[0][0]+1)
+            query2 = f"""
+            INSERT INTO executive (Executive_ID, Name, Surname) VALUES ('{exec_id}', '{name}', '{surname}')
+            """
             cur.execute(query2)
             db.connection.commit()
             cur.close()
@@ -184,7 +257,7 @@ def insertExec():
     return render_template("insert_executive.html", pageTitle = "Insert Executive", form = form)
 
 @app.route('/executive/delete/<int:execID>', methods = ["POST"])
-def deletecar(execID):
+def deleteexec(execID):
     conn = db.connection
     cur = conn.cursor()
     query1 = """SET FOREIGN_KEY_CHECKS = 0"""
