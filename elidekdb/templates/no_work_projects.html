@@ -1,0 +1,33 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <h3>{{pageTitle}}</h3>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Researcher ID</th>
+                                <th>Name</th>
+                                <th>No. of projects with no work</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td> {{ result.Researcher_ID }} </td>
+                                <td> {{ result.Full_Name }} </td>
+                                <td> {{ result.project_cnt }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
