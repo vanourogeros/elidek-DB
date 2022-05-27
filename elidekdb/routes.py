@@ -161,7 +161,7 @@ def projects_view():
 
 @app.route("/projects/update/<int:projID>", methods = ["POST"])
 def updateProject(projID):
-    
+    print("awoogra!!!")
     form2 = ProjUpdate()
     cur = db.connection.cursor() 
   
@@ -216,12 +216,6 @@ def executive_view():
     SELECT *
     FROM Executive
     """
-
-    if(request.method == "POST" and form.validate_on_submit()):
-        id = request.form.get('execID')
-        name = str(request.form.get('name'))
-        surname = str(request.form.get('surname'))
-        print(id)
         
     cur.execute(query)
     column_names = [i[0] for i in cur.description]

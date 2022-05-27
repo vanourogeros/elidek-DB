@@ -80,7 +80,7 @@
                 <h4 class="modal-title">Update Project</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" id="modal-form" method="POST">
+                <form class="form-horizontal" id="modal-form">
                     {{ form2.hidden_tag() }}
                     <div style="text-align: center;">
                         <input type="text" name="id" id="id" readonly>
@@ -106,7 +106,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                {{ form2.submit(class = "btn btn btn-success", form2 = "modal-form", value = "Update") }}
+                {{ form2.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -115,7 +115,6 @@
 </div>
 
 <div class="container">
-    {% include "flash_messages.html" %}
     
     <div class="row" id="row">
         <div class="col-md-12">
