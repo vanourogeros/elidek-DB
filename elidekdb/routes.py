@@ -206,6 +206,30 @@ def updateProject(projID):
                 flash(error, "danger")
     return redirect(url_for("projects_view"))  
 
+@app.route("/projects/delete/<int:projID>", methods = ["POST"])
+def deleteProject(projID):
+    cur = db.connection.cursor() 
+    
+    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
+    query = f"""
+    DELETE FROM project WHERE Project_ID = {projID}
+    """
+    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
+    try:
+        cur.execute(query1)
+        db.connection.commit()
+        cur.execute(query)
+        db.connection.commit()
+        cur.execute(query2)
+        db.connection.commit()
+        db.connection.close()
+        flash("Project deleted successfully", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect('/projects')
+
+
 @app.route("/projects/<int:projectID>")
 def fetch_project_researchers(projectID):
     cur = db.connection.cursor()   
