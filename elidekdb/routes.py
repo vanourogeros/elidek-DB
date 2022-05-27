@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
+from numpy import True_
 from elidekdb import app, db ## initially created by __init__.py, need to be used here
 from elidekdb.forms import *
 
@@ -136,7 +137,6 @@ def updateExec(execID):
     form = ExecUpdate()
     name = str(request.form.get('name'))
     surname = str(request.form.get('surname'))
-    updateData = form.__dict__
     if(form.validate_on_submit()):
         query = f"""
         UPDATE executive SET Name = '{name}', Surname = '{surname}' WHERE Executive_ID = {str(execID)}
@@ -156,17 +156,51 @@ def updateExec(execID):
                 flash(error, "danger")
     return redirect('/executive')
 
-@app.route('/executive/delete/<int:execID>')
+@app.route("/executive/insert", methods = ["GET","POST"])
+def insertExec():
+    form = ExecUpdate()
+    name = str(request.form.get('name'))
+    surname = str(request.form.get('surname'))
+    exec_id = 0
+    if(request.method == "POST" and form.validate_on_submit()):
+        query1 =  """SELECT MAX(Executive_ID) FROM executive"""
+        query2 = f"""
+        INSERT INTO executive (Executive_ID, Name, Surname) VALUES ('{exec_id}', '{name}', '{surname}')
+        """
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query1)
+            temp = cur.fetchall()
+            exec_id = int(temp[0][0]) +1
+            cur.execute(query2)
+            db.connection.commit()
+            cur.close()
+            flash("Executive inserted successfully", "success")
+
+        except Exception as e: ## OperationalError
+            flash(str(e), "danger")
+
+    ## else, response for GET request
+    return render_template("insert_executive.html", pageTitle = "Insert Executive", form = form)
+
+@app.route('/executive/delete/<int:execID>', methods = ["POST"])
 def deletecar(execID):
     conn = db.connection
     cur = conn.cursor()
+    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
         DELETE FROM executive WHERE Executive_ID =  {execID}
         """
+    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
+        cur.execute(query1)
+        conn.commit()
         cur.execute(query)
         conn.commit()
+        cur.execute(query2)
+        conn.commit()
         conn.close()
+        flash("Executive deleted successfully", "success")
     except Exception as e:
         flash(str(e), "danger")
 

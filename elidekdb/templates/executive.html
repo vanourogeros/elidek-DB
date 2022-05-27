@@ -4,24 +4,26 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>ELIDEK Executives</h3>
-    <button type="button" class="btn btn-success float-end"
-    data-toggle="modal" data-target="#mymodal">Add executive</button> 
+        <a href='/executive/insert'>
+            <button class="btn btn-success float-end">
+                Add executive
+            </button>
+        </a>
     <div class="row" id="row">
+        
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">
                 {% if executive|length == 0 %}
                     <h1 style="margin-top: 5rem;">No Executives found!</h1>
                 {% else %}
-                    <div class="table-responsive"> 
-                        <table class="table table-borderless">
-                            
+                    <div class="table-responsive">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Executive ID</th>
                                     <th>Name</th>
                                     <th>Surname</th>
-                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,19 +41,16 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         </td>
-                                        <td> <a href = "/executive/update/{{ exec.Executive_ID }}">Update</a> </td>
                                         <td>
                                             <button style = "all: unset; cursor: pointer;" type = "button"
                                             data-bs-toggle = "modal" data-bs-target = "#deleteModal"
                                             data-id = "{{ exec.Executive_ID }}" onclick = "setDeleteModalFields(this)">
                                                 <i class = "fa fa-trash"></i>
                                             </button>
-                                        <td><a href="/executive/update/{{ exec.Executive_ID }}">Delete</a></td>
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
-                            
                         </table>
                     </div>
                 {% endif %}
@@ -93,15 +92,36 @@
                         </ul>
                         {% endif %}
                     </div>
-                
-                </div>
-                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
-        
+
     </div>
-   
-    
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete executive</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                <h2>Warning!</h2> If the executive funds a project it will be deleted
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 
