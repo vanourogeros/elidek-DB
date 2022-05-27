@@ -29,7 +29,7 @@
                                             <a type="button" onclick="setModalFields(this)"
                                             data-toggle="modal" data-id="{{ exec.Executive_ID }}"
                                             data-name="{{exec.Name}}"  data-surname= "{{exec.Surname}}"
-                                            data-email="{{exec.Executive_ID}}" data-bs-toggle = "modal"
+                                            data-bs-toggle = "modal"
                                             data-bs-target="#editModal">
                                                 <i class="fa fa-edit"></i>
                                             </a>
@@ -62,7 +62,7 @@
                 <h4 class="modal-title">Update Executive</h4>
             </div>
             <div class="modal-body">
-                <form id="modal-form">
+                <form id="modal-form" method = "POST">
                     {{ form.hidden_tag() }}
                     <div style="text-align: center;">
                         <input type="text" name="id" id="id" readonly>
@@ -125,11 +125,11 @@
 <script>
     function setModalFields(row) {
         document.getElementById("id").value = row.getAttribute("data-id");
-        document.getElementById("name").value = row.getAttribute("data-name");
-        document.getElementById("surname").value = row.getAttribute("data-surname");
-        document.getElementById("modal-form").action = "/executive/update/" + row.getAttribute("data-id");
+        document.getElementById("Name").value = row.getAttribute("data-name");
+        document.getElementById("Surname").value = row.getAttribute("data-surname");
+        document.getElementById("modal-form").action = "/executive/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
-        document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
         // commented line above would prevent the default behavior of the submit button, that is, sending the
         // form data with a post request to the determined address and subsequently closing the pop-up
     }

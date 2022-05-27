@@ -107,7 +107,7 @@ def fetch_project_researchers(projectID):
 
     return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
 
-@app.route("/executive", methods = ['GET', 'POST'])
+@app.route("/executive", methods = ["GET", "POST"])
 def executive_view():
     cur = db.connection.cursor()   
     form = ExecUpdate()
@@ -118,8 +118,10 @@ def executive_view():
     """
 
     if(request.method == "POST" and form.validate_on_submit()):
+        id = request.form.get('execID')
         name = str(request.form.get('name'))
         surname = str(request.form.get('surname'))
+        print(id)
         
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
@@ -130,13 +132,16 @@ def executive_view():
 
 @app.route("/executive/update/<int:execID>", methods = ["POST"])
 def updateExec(execID):
-    
+    print("awoogra!!!!")
     form = ExecUpdate()
+    name = str(request.form.get('name'))
+    surname = str(request.form.get('surname'))
     updateData = form.__dict__
     if(form.validate_on_submit()):
-        query = """
-        UPDATE executive SET Name = 'name', Surname = 'surname' WHERE Executive_ID = {execID}
+        query = f"""
+        UPDATE executive SET Name = '{name}', Surname = '{surname}' WHERE Executive_ID = {str(execID)}
         """
+        print(query)
         try:
             cur = db.connection.cursor()
             cur.execute(query)
