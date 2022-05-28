@@ -332,10 +332,12 @@ def deleteexec(execID):
 
     return redirect('/executive')
 
-@app.route("/projects-per-researcher")
+@app.route("/projects-per-researcher", methods = ["GET", "POST"])
 def projects_per_researcher_view():
-    cur = db.connection.cursor()   
+    create_form = WorksOnAdd()
+    delete_form = WorksOnDelete()
 
+    cur = db.connection.cursor() 
     query = """
     SELECT *
     FROM projects_per_researcher
@@ -343,9 +345,71 @@ def projects_per_researcher_view():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
-    cur.close()
 
-    return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page")
+    # Set researcher fields 
+    query = """
+    SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name)
+    FROM projects_per_researcher
+    """
+    cur.execute(query)
+    create_form.researcher.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    delete_form.researcher_d.choices = [entry for entry in cur.fetchall()]
+
+    # Set project fields 
+    query = """
+    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
+    FROM projects_per_researcher
+    ORDER BY Project_ID
+    """
+    cur.execute(query)
+    create_form.project.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    delete_form.project_d.choices = [entry for entry in cur.fetchall()]
+    
+
+    if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('researcher') != 'None'):
+        try:
+            researcher = request.form.get('researcher')
+            project = request.form.get('project')
+            start_date = request.form.get('start_date')
+            query = f"""
+                    INSERT INTO Works_On (Researcher_ID, Project_ID, Start_Date) 
+                    VALUES ({researcher},{project},'{start_date}')
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Researcher added project successfully", "success")
+            return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
+     create_form = create_form, delete_form = delete_form)
+        except Exception as e:
+            print("not a creation")
+            if '1054' not in str(e):
+                flash(str(e), "danger")
+    
+    if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('researcher_d') != 'None'):
+        try:
+            researcher = request.form.get('researcher_d')
+            project = request.form.get('project_d')
+            query = f"""
+                    DELETE FROM Works_On
+                    WHERE Researcher_ID = {researcher} AND Project_ID = {project}
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Researcher removed from project successfully", "success")
+            return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
+     create_form = create_form, delete_form = delete_form)
+        except Exception as e:
+            print("not a deletion")
+            if '1054' not in str(e):
+                flash(str(e), "danger")
+    
+    cur.close()
+    return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
+     create_form = create_form, delete_form = delete_form)
 
 @app.route("/projects-per-field")
 def projects_per_field_view():
