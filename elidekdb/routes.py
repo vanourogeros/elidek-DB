@@ -11,7 +11,6 @@ def index():
 @app.route("/programs")
 def programs_view():
     cur = db.connection.cursor()   
-    form = ProgramUpdate()
     query = """
     SELECT *
     FROM Program
@@ -23,13 +22,14 @@ def programs_view():
     cur.close()
     #print(programs[1])
 
-    return render_template("programs.html", programs=programs, pageTitle = "Programs Page", form=form)
+    return render_template("programs.html", programs=programs, pageTitle = "Programs Page")
 
 
 @app.route("/programs/delete/<Name>", methods = ["POST"])
 def deleteProgram(Name):
     conn = db.connection
     cur = conn.cursor()
+    form2 = ProgramUpdate()
     query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
     DELETE FROM program WHERE Name =  'Name'
@@ -64,12 +64,11 @@ def newProgram():
     cur.close()
     if(request.method == "POST"):
         sector = str(request.form.get('ELIDEK_Sector'))
-        cur = db.connection.cursor() 
         query = f"""
         INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
         """
         try:
-            cur = db.connection.cursor()
+            cur = db.connection.cursor() 
             cur.execute(query)
             db.connection.commit()
             cur.close()
@@ -80,32 +79,6 @@ def newProgram():
         return redirect('/programs')
     return render_template("create_program.html", pageTitle = "Create Program", form = form)
 
- 
-
-@app.route("/programs/update/<int:progID>", methods = ["POST"])
-def programUpdate(progID):
-    cur = db.connection.cursor()   
-    form = ProgramUpdate()
-    name = str(request.form.get('name'))
-    sector = str(request.form.get('sector'))
-
-    if(form.validate_on_submit()):
-        query = f"""
-        UPDATE program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Executive_ID = {str(progID)}
-        """
-        try:
-            cur = db.connection.cursor()
-            cur.execute(query)
-            db.connection.commit()
-            cur.close()
-            flash("Program updated successfully", "success")
-        except Exception as e:
-            flash(str(e), "danger")
-    else:
-        for category in form.errors.values():
-            for error in category:
-                flash(error, "danger")
-    return redirect('/programs')
 
 
 @app.route("/projects", methods = ['GET', 'POST'])

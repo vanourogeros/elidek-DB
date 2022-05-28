@@ -6,11 +6,10 @@ from wtforms.validators import DataRequired, Email, Optional, NumberRange
 ## with the additional restrictions specified for each field
 
 class ProgramUpdate(FlaskForm):
-    #name = StringField(label = "Executive Name", validators = [DataRequired(message = "Name is a required field.")])
-    name = SelectField(u'Sector name', validate_choice=False)
+    name = StringField(label = "Program Name", validators = [DataRequired(message = "Name is a required field.")])
+    #name = SelectField(u'Sector name', validate_choice=False)
     sector = SelectField(u'Sector name', validate_choice=False)
     submit = SubmitField("Submit")
-    update = SubmitField("Update")
 
 
 class ProjectFilterForm(FlaskForm):

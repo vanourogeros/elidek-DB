@@ -3,6 +3,11 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>ELIDEK Programs</h3>
+    <a href='/programs/create'>
+        <button class="btn btn-success float-end">
+            Add program
+        </button>
+    </a>
     <div class="row" id="row">
         <div class="col-md-12">
             <div class="card" id="card-container">
@@ -47,19 +52,22 @@
 </div>
 
 
+
+
+
 <script>
     function setModalFields(row) {
         document.getElementById("id").value = row.getAttribute("data-id");
         document.getElementById("Name").value = row.getAttribute("data-name");
         document.getElementById("Summary").value = row.getAttribute("data-summary");
-        document.getElementById("modal-form").action = "/projects/update/" + document.getElementById("id").value;
+        document.getElementById("modal-form").action = "/programs/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
         // commented line above would prevent the default behavior of the submit button, that is, sending the
         // form data with a post request to the determined address and subsequently closing the pop-up
     }
     function setDeleteModalFields(row) {
-        document.getElementById("delete-modal-form").action = "/projects/delete/" +  parseInt(row.getAttribute("data-name"));
+        document.getElementById("delete-modal-form").action = "/programs/delete/" +  parseInt(row.getAttribute("data-name"));
         document.getElementById("delete-modal-form").method = "POST";
     }
 
