@@ -20,6 +20,22 @@
                             <tr>
                                 <td> {{ program.Name }} </td>
                                 <td> {{ program.ELIDEK_Sector }} </td>
+                                <td>
+                                    <a type="button" onclick="setModalFields(this)"
+                                    data-toggle="modal" 
+                                    data-name="{{program.Name}}"  data-summary= "{{program.ELIDEK_Sector}}"
+                                    data-bs-toggle = "modal"
+                                    data-bs-target="#editModal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button style = "all: unset; cursor: pointer;" type = "button"
+                                    data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                    data-name= "{{ program.Name }}" onclick = "setDeleteModalFields(this)">
+                                        <i class = "fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -29,4 +45,26 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    function setModalFields(row) {
+        document.getElementById("id").value = row.getAttribute("data-id");
+        document.getElementById("Name").value = row.getAttribute("data-name");
+        document.getElementById("Summary").value = row.getAttribute("data-summary");
+        document.getElementById("modal-form").action = "/projects/update/" + document.getElementById("id").value;
+        document.getElementById("modal-form").method = "POST";
+        // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // commented line above would prevent the default behavior of the submit button, that is, sending the
+        // form data with a post request to the determined address and subsequently closing the pop-up
+    }
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/projects/delete/" +  parseInt(row.getAttribute("data-name"));
+        document.getElementById("delete-modal-form").method = "POST";
+    }
+
+</script>
+
+ 
+
 {% endblock %}

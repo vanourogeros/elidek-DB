@@ -26,14 +26,14 @@ def programs_view():
     return render_template("programs.html", programs=programs, pageTitle = "Programs Page", form=form)
 
 
-@app.route("/programs/delete/<int:Name>", methods = ["POST"])
+@app.route("/programs/delete/<Name>", methods = ["POST"])
 def deleteProgram(Name):
     conn = db.connection
     cur = conn.cursor()
     query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
-        DELETE FROM program WHERE Name =  {str(Name)}
-        """
+    DELETE FROM program WHERE Name =  'Name'
+    """
     query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
         cur.execute(query1)
@@ -50,29 +50,37 @@ def deleteProgram(Name):
     return redirect('/programs')
 
 
-@app.route("/programs/insert/<int:Name>", methods = ["POST"])
-def newProgram(Name):
+@app.route("/programs/create", methods = ["GET", "POST"])
+def newProgram():
     cur = db.connection.cursor()   
     form = ProgramUpdate()
     name = str(request.form.get('name'))
-    sector = str(request.form.get('sector'))
-    if(form.validate_on_submit()):
+    query = """
+    SELECT DISTINCT ELIDEK_Sector
+    FROM program
+    """
+    cur.execute(query)
+    form.sector.choices = [entry for entry in cur.fetchall()]
+    cur.close()
+    if(request.method == "POST"):
+        sector = str(request.form.get('ELIDEK_Sector'))
+        cur = db.connection.cursor() 
         query = f"""
-        INSERT program SET Name = '{name}', ELIDEK_Sector = '{sector}' WHERE Name = {str(Name)}
+        INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
         """
         try:
             cur = db.connection.cursor()
             cur.execute(query)
             db.connection.commit()
             cur.close()
-            flash("Program updated successfully", "success")
+            flash("Program created successfully", "success")
         except Exception as e:
             flash(str(e), "danger")
-    else:
-        for category in form.errors.values():
-            for error in category:
-                flash(error, "danger")
-    return redirect('/programs')
+    
+        return redirect('/programs')
+    return render_template("create_program.html", pageTitle = "Create Program", form = form)
+
+ 
 
 @app.route("/programs/update/<int:progID>", methods = ["POST"])
 def programUpdate(progID):
@@ -305,6 +313,7 @@ def insertExec():
 
     ## else, response for GET request
     return render_template("create_executive.html", pageTitle = "Create Executive", form = form)
+
 
 @app.route('/executive/delete/<int:execID>', methods = ["POST"])
 def deleteexec(execID):
