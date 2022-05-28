@@ -5,7 +5,7 @@
     <h3>{{pageTitle}}</h3>
     <div class="row" id="row">
         <a href='/programs'>
-            <button type="button" class="btn btn-outline-dark float-end">Back to executives</button>
+            <button type="button" class="btn btn-outline-dark float-end">Back to programs</button>
         </a>
         <div class="col-md-12">
             <form class="form-horizontal" name="programs-dropdown" method="POST">
@@ -16,7 +16,10 @@
                     {{ form.name(id = "Name", required = False) }}
                     <p></p>
                     Sector:
-                    {{ form.sector(class = "form-control", placeholder="Enter name", required = False) }}
+                    {{ form.sector(class = "form-control", placeholder="Choose sector", required = False) }}
+                    <p></p>
+                    Or add new sector:
+                    {{ form.sector2(id = "Enter new sector", required = False) }}
                     {% if form.sector.errors %}
                     <ul class = "errors">
                         {% for error in form.sector.errors %}

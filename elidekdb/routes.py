@@ -54,10 +54,19 @@ def deleteProgram(Name):
 def newProgram():
     cur = db.connection.cursor()   
     form = ProgramUpdate()  
+    query = """
+    SELECT DISTINCT  ELIDEK_Sector, ELIDEK_Sector
+    FROM program
+    """
+    cur.execute(query)
+    form.sector.choices = [entry for entry in cur.fetchall()]
     cur.close()
     if(request.method == "POST"):
         name = str(request.form.get('name'))
         sector = str(request.form.get('sector'))
+        sector2 = str(request.form.get('sector2'))
+        if sector2 != '':
+            sector = sector2
         query = f"""
         INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
         """
@@ -70,7 +79,6 @@ def newProgram():
         except Exception as e:
             flash(str(e), "danger")
     
-        return redirect('/programs')
     return render_template("create_program.html", pageTitle = "Create Program", form = form)
 
 
