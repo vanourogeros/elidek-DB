@@ -8,8 +8,8 @@ from wtforms.validators import DataRequired, Email, Optional, NumberRange
 class ProgramUpdate(FlaskForm):
     name = StringField(label = "Program Name", validators = [DataRequired(message = "Name is a required field.")])
     #name = SelectField(u'Sector name', validate_choice=False)
-    sector = SelectField(u'Sector name', validate_choice=False)
-    submit = SubmitField("Submit")
+    sector = StringField(u'Sector name')
+    submit = SubmitField("Submit", validators = [DataRequired(message = "Name is a required field.")])
 
 
 class ProjectFilterForm(FlaskForm):
@@ -43,3 +43,7 @@ class ProjUpdate(FlaskForm):
     end_date = DateField(label = "End Date")
     organization = SelectField(u'Org ID', validate_choice=False)
     submit = SubmitField("Update")
+
+class WorksOn(FlaskForm):
+    researcher = SelectField(u'Org ID', validate_choice=False)
+    project = SelectField(u'Org ID', validate_choice=False)

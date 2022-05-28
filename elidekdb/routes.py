@@ -54,16 +54,10 @@ def deleteProgram(Name):
 def newProgram():
     cur = db.connection.cursor()   
     form = ProgramUpdate()  
-    query = """
-    SELECT DISTINCT ELIDEK_Sector, Name
-    FROM program
-    """
-    cur.execute(query)
-    form.sector.choices = [entry for entry in cur.fetchall()]
     cur.close()
     if(request.method == "POST"):
         name = str(request.form.get('name'))
-        sector = str(request.form.get('ELIDEK_Sector'))
+        sector = str(request.form.get('sector'))
         query = f"""
         INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
         """
@@ -332,8 +326,8 @@ def deleteexec(execID):
 
 @app.route("/projects-per-researcher")
 def projects_per_researcher_view():
-    cur = db.connection.cursor()   
-
+    form = WorksOn()
+    cur = db.connection.cursor() 
     query = """
     SELECT *
     FROM projects_per_researcher
@@ -341,6 +335,22 @@ def projects_per_researcher_view():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+    # Set researcher fields 
+    query = """
+    SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name)
+    FROM projects_per_researcher
+    """
+    cur.execute(query)
+    form.researcher.choices = [entry for entry in cur.fetchall()]
+
+    # Set project fields 
+    query = """
+    SELECT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
+    FROM projects_per_researcher
+    """
+    cur.execute(query)
+    form.project.choices = [entry for entry in cur.fetchall()]
     cur.close()
 
     return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page")
