@@ -12,7 +12,10 @@
                 <!-- hidden_tag returns the form's security metadata -->
                 {{ form.hidden_tag() }}
                 <div class="form-group col-sm-3 mb-3">
+                    New program name:
                     {{ form.name(id = "Name", required = False) }}
+                    <p></p>
+                    Sector:
                     {{ form.sector(class = "form-control", placeholder="Enter name", required = False) }}
                     {% if form.sector.errors %}
                     <ul class = "errors">

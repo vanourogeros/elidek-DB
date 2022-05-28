@@ -53,16 +53,16 @@ def deleteProgram(Name):
 @app.route("/programs/create", methods = ["GET", "POST"])
 def newProgram():
     cur = db.connection.cursor()   
-    form = ProgramUpdate()
-    name = str(request.form.get('name'))
+    form = ProgramUpdate()  
     query = """
-    SELECT DISTINCT ELIDEK_Sector
+    SELECT DISTINCT ELIDEK_Sector, Name
     FROM program
     """
     cur.execute(query)
     form.sector.choices = [entry for entry in cur.fetchall()]
     cur.close()
     if(request.method == "POST"):
+        name = str(request.form.get('name'))
         sector = str(request.form.get('ELIDEK_Sector'))
         query = f"""
         INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
