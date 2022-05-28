@@ -83,14 +83,20 @@
                 <form class="form-horizontal" id="modal-form">
                     {{ form2.hidden_tag() }}
                     <div style="text-align: center;">
-                        <input type="text" name="id" id="id" readonly>
-                        {{ form2.name(id = "Name", required = False) }}
-                        {{ form2.summary(id = "Summary", required = False) }}
-                        {{ form2.funds(id = "Funds", required = False) }}
-                        {{ form2.executive(id = "Executive", required = False) }}
+                        <p><b> Edit Project with ID: <input type="text" name="id" id="id" readonly> </b> </p>
+                        <p>Name:
+                        {{ form2.name(id = "Name", required = False) }} </p>
+                        <p>Summary: </p>
+                        <p>{{ form2.summary(id = "Summary", required = False) }} </p>
+                        <p>Funds:
+                        {{ form2.funds(id = "Funds", required = False) }} </p>
+                        <p>Executive:
+                        {{ form2.executive(id = "Executive", required = False) }} </p>
+                        <p>Start and End dates:
                         {{ form2.start_date(id = "Start Date", required = False) }}
-                        {{ form2.end_date(id = "End Date", required = False) }}
-                        {{ form2.organization(id = "Organization", required = False) }}
+                        {{ form2.end_date(id = "End Date", required = False) }} </p>
+                        <p>Organization:
+                        {{ form2.organization(id = "Organization", required = False) }} </p>
                     </div>
                     <div>
                         {% if form2.name.errors %}
