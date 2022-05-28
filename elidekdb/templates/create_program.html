@@ -15,10 +15,10 @@
                     New program name:
                     {{ form.name(id = "Name", required = False) }}
                     <p></p>
-                    Sector:
-                    {{ form.sector(class = "form-control", placeholder="Choose sector", required = False) }}
+                    Choose an existing sector:
+                    {{ form.sector(class = "form-select", placeholder="Choose sector", required = False) }}
                     <p></p>
-                    Or add new sector:
+                    Or add new sector:<p>(Warning!: This choice will overwrite</p>
                     {{ form.sector2(id = "Enter new sector", required = False) }}
                     {% if form.sector.errors %}
                     <ul class = "errors">

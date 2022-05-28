@@ -200,11 +200,11 @@ def deleteProject(projID):
     query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
         cur.execute(query1)
-        db.connection.commit()
+        #db.connection.commit()
         cur.execute(query)
-        db.connection.commit()
+        #db.connection.commit()
         cur.execute(query2)
-        db.connection.commit()
+        #db.connection.commit()
         db.connection.close()
         flash("Project deleted successfully", "success")
     except Exception as e:
