@@ -3,6 +3,77 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>{{pageTitle}}</h3>
+    <form class="form-horizontal" name="add-form" method="POST">
+        <!-- hidden_tag returns the form's security metadata -->
+        {{ add_form.hidden_tag() }}
+        Research Field :
+        {{ add_form.field(class = "form-select", placeholder="Enter name", required = False) }}
+        Project :
+        {{ add_form.project(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to add a field to a project :
+        {{ add_form.checkbox(placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ add_form.submit(class = "btn btn-primary btn-success") }}
+        
+    </form>
+
+    <p></p>
+
+    <form class="form-horizontal" name="delete-form" method="POST">
+        {{ remove_form.hidden_tag() }}
+        Research Field :
+        {{ remove_form.field_d(class = "form-select", placeholder="Enter name", required = False) }}
+        Project :
+        {{ remove_form.project_d(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to remove a field from a project :
+        {{ remove_form.checkbox_d(placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ remove_form.submit_d(class = "btn btn-primary btn-danger") }}
+     
+    </form>
+
+    <p></p>
+
+    <form class="form-horizontal" name="create-form" method="POST">
+        <!-- hidden_tag returns the form's security metadata -->
+        {{ create_form.hidden_tag() }}
+        Research Field Name :
+        {{ create_form.field_name(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to create a new field:
+        {{ create_form.checkbox_cf(placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ create_form.submit(class = "btn btn-primary btn-success") }}
+        
+    </form>
+
+    <p></p>
+
+    <form class="form-horizontal" name="delete-field-form" method="POST">
+        {{ delete_form.hidden_tag() }}
+        Research Field :
+        {{ delete_form.field(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to delete a field:
+        {{ delete_form.checkbox_df(placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ delete_form.submit(class = "btn btn-primary btn-danger") }}
+     
+    </form>
+
+    <p></p>
+
+    <form class="form-horizontal" name="edit-field-form" method="POST">
+        {{ edit_form.hidden_tag() }}
+        Research Field :
+        {{ edit_form.field(class = "form-select", placeholder="Enter name", required = False) }}
+        New Name for research field:
+        {{ edit_form.field_name(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to edit a field's name:
+        {{ edit_form.checkbox_ef(placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ edit_form.submit(class = "btn btn-primary") }}
+     
+    </form>
+
     <div class="row" id="row">
         <div class="col-md-12">
             <div class="card" id="card-container">

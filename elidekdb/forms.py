@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, DateField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, DateField, TextAreaField, SelectField, RadioField
 from wtforms.validators import DataRequired, Email, Optional, NumberRange
 
 ## when passed as a parameter to a template, an object of this class will be rendered as a regular HTML form
@@ -47,8 +47,8 @@ class ProjUpdate(FlaskForm):
     submit = SubmitField("Update")
 
 class WorksOnAdd(FlaskForm):
-    researcher = SelectField(u'Org ID', validate_choice=False)
-    project = SelectField(u'Org ID', validate_choice=False)
+    researcher = SelectField(u'Researcher ID', validate_choice=False)
+    project = SelectField(u'Project ID', validate_choice=False)
     start_date = DateField(label = "Start Date", validators = [DataRequired(message = "Name is a required field.")])
     submit = SubmitField("Add Researcher to Project")
 
@@ -56,3 +56,31 @@ class WorksOnDelete(FlaskForm):
     researcher_d = SelectField(u'Org ID', validate_choice=False)
     project_d = SelectField(u'Org ID', validate_choice=False)
     submit_d = SubmitField("Remove Researcher from Project")
+
+class AddProjectField(FlaskForm):
+    project = SelectField(u'Project ID', validate_choice=False)
+    field = SelectField(u'Project ID', validate_choice=False)
+    checkbox = RadioField(u'I want to add a field to a project', choices = ['Yes', 'No'])
+    submit = SubmitField("Add Field to Project")
+
+class RemoveProjectField(FlaskForm):
+    project_d = SelectField(u'Project ID', validate_choice=False)
+    field_d = SelectField(u'Project ID', validate_choice=False)
+    checkbox_d = RadioField(u'I want to remove a field from a project', choices = ['Yes', 'No'])
+    submit_d = SubmitField("Remove Field from Project")
+
+class newField(FlaskForm):
+    field_name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox_cf = RadioField(u'I want to add a new field', choices = ['Yes', 'No'])
+    submit = SubmitField("Add Field")
+
+class deleteField(FlaskForm):
+    field = SelectField(u'Field ID', validate_choice=False)
+    checkbox_df = RadioField(u'I want to delete a field', choices = ['Yes', 'No'])
+    submit = SubmitField("Remove Field")
+
+class editField(FlaskForm):
+    field = SelectField(u'Field ID', validate_choice=False)
+    field_name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox_ef = RadioField(u'I want to edit an existing field', choices = ['Yes', 'No'])
+    submit = SubmitField("Edit Field")

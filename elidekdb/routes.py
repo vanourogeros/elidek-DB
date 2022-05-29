@@ -393,10 +393,15 @@ def projects_per_researcher_view():
     return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
      create_form = create_form, delete_form = delete_form)
 
-@app.route("/projects-per-field")
+@app.route("/projects-per-field", methods = ["GET", "POST"])
 def projects_per_field_view():
     cur = db.connection.cursor()   
-
+    add_form = AddProjectField()
+    remove_form = RemoveProjectField()
+    create_form = newField()
+    delete_form = deleteField()
+    edit_form = editField()
+    #  create query results
     query = """
     SELECT *
     FROM projects_per_field
@@ -404,9 +409,113 @@ def projects_per_field_view():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+    # Set project fields 
+    query = """
+    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
+    FROM projects_per_field
+    ORDER BY Project_ID
+    """
+    cur.execute(query)
+    add_form.project.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    remove_form.project_d.choices = [entry for entry in cur.fetchall()]
+
+    # Set field fields (haha)
+    query = """
+    SELECT DISTINCT Field_ID, CONCAT(Field_ID, ', ', Name)
+    FROM Research_Field
+    ORDER BY Field_ID
+    """
+    cur.execute(query)
+    add_form.field.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    remove_form.field_d.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    delete_form.field.choices = [entry for entry in cur.fetchall()]
+    cur.execute(query)
+    edit_form.field.choices = [entry for entry in cur.fetchall()]
+    
+    if(request.method == "POST" and add_form.validate_on_submit() and request.form.get('checkbox') == 'Yes'):
+        try:
+            field = request.form.get('field')
+            project = request.form.get('project')
+            query = f"""
+                    INSERT INTO Refers_To (Field_ID, Project_ID) 
+                    VALUES ({field},{project})
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Field added to project successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    
+    if(request.method == "POST" and remove_form.validate_on_submit() and request.form.get('checkbox_d') == 'Yes'):
+        try:
+            field = request.form.get('field_d')
+            project = request.form.get('project_d')
+            query = f"""
+                    DELETE FROM Refers_To 
+                    WHERE Field_ID = {field} AND Project_ID = {project}
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Field removed from project successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    
+    if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('checkbox_cf') == 'Yes'):
+        try:
+            cur.execute("SELECT 1+MAX(Field_ID) FROM Research_Field")
+            field_id = cur.fetchone()[0]
+            field_name = request.form.get('field_name')
+            query = f"""
+                    INSERT INTO Research_Field (Field_ID, Name) 
+                    Values({field_id},'{field_name}')
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Field created successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+
+    if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('checkbox_df') == 'Yes'):
+        try:
+            field_id = request.form.get('field')
+            query = f"""
+                    DELETE FROM Research_Field
+                    WHERE Field_ID = {field_id}
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Field deleted successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+
+    if(request.method == "POST" and edit_form.validate_on_submit() and request.form.get('checkbox_ef') == 'Yes'):
+        try:
+            field_id = request.form.get('field')
+            field_name = request.form.get('field_name')
+            query = f"""
+                    UPDATE Research_Field
+                    SET Name = '{field_name}'
+                    WHERE Field_ID = {field_id}
+                """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Field edited successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+
     cur.close()
 
-    return render_template("projects_per_field.html", results=results, pageTitle = "Projects per Research Field")
+    return render_template("projects_per_field.html", results=results, pageTitle = "Projects per Research Field",
+    add_form = add_form, remove_form = remove_form, create_form = create_form, delete_form=delete_form, edit_form = edit_form)
 
 @app.route("/specific-research-field", methods = ['GET', 'POST'])
 def specific_research_field():
