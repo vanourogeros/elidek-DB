@@ -10,7 +10,6 @@ class ProgramUpdate(FlaskForm):
     sector2 = StringField(label="Add new sector name", validators = [Optional()])
     name = StringField(label = "Program Name", validators = [DataRequired(message = "Name is a required field.")])
     #name = SelectField(u'Sector name', validate_choice=False)
-    sector = StringField(u'Sector name')
     submit = SubmitField("Submit", validators = [DataRequired(message = "Name is a required field.")])
 
 
