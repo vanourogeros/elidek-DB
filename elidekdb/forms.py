@@ -68,3 +68,31 @@ class EvalDelete(FlaskForm):
     researcher_d = SelectField(u'eval ID', validate_choice=False)
     project_d = SelectField(u'eval ID', validate_choice=False)
     submit_d = SubmitField("Remove Project Evaluator")
+
+class AddProjectField(FlaskForm):
+    project = SelectField(u'Project ID', validate_choice=False)
+    field = SelectField(u'Project ID', validate_choice=False)
+    checkbox = RadioField(u'I want to add a field to a project', choices = ['Yes', 'No'])
+    submit = SubmitField("Add Field to Project")
+
+class RemoveProjectField(FlaskForm):
+    project_d = SelectField(u'Project ID', validate_choice=False)
+    field_d = SelectField(u'Project ID', validate_choice=False)
+    checkbox_d = RadioField(u'I want to remove a field from a project', choices = ['Yes', 'No'])
+    submit_d = SubmitField("Remove Field from Project")
+
+class newField(FlaskForm):
+    field_name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox_cf = RadioField(u'I want to add a new field', choices = ['Yes', 'No'])
+    submit = SubmitField("Add Field")
+
+class deleteField(FlaskForm):
+    field = SelectField(u'Field ID', validate_choice=False)
+    checkbox_df = RadioField(u'I want to delete a field', choices = ['Yes', 'No'])
+    submit = SubmitField("Remove Field")
+
+class editField(FlaskForm):
+    field = SelectField(u'Field ID', validate_choice=False)
+    field_name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox_ef = RadioField(u'I want to edit an existing field', choices = ['Yes', 'No'])
+    submit = SubmitField("Edit Field")
