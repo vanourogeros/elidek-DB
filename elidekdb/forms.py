@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, DateField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, DateField, TextAreaField, SelectField, RadioField
 from wtforms.validators import DataRequired, Email, Optional, NumberRange
 
 ## when passed as a parameter to a template, an object of this class will be rendered as a regular HTML form
@@ -47,8 +47,8 @@ class ProjUpdate(FlaskForm):
     submit = SubmitField("Update")
 
 class WorksOnAdd(FlaskForm):
-    researcher = SelectField(u'Org ID', validate_choice=False)
-    project = SelectField(u'Org ID', validate_choice=False)
+    researcher = SelectField(u'Researcher ID', validate_choice=False)
+    project = SelectField(u'Project ID', validate_choice=False)
     start_date = DateField(label = "Start Date", validators = [DataRequired(message = "Name is a required field.")])
     submit = SubmitField("Add Researcher to Project")
 
@@ -68,4 +68,3 @@ class EvalDelete(FlaskForm):
     researcher_d = SelectField(u'eval ID', validate_choice=False)
     project_d = SelectField(u'eval ID', validate_choice=False)
     submit_d = SubmitField("Remove Project Evaluator")
-
