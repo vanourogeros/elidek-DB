@@ -306,6 +306,7 @@ def deleteexec(execID):
         """
     try:
         cur.execute(query)
+        conn.commit()
         conn.close()
         flash("Executive deleted successfully", "success")
     except Exception as e:
