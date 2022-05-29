@@ -55,7 +55,7 @@ def newProgram():
     cur = db.connection.cursor()   
     form = ProgramUpdate()  
     query = """
-    SELECT DISTINCT  ELIDEK_Sector, ELIDEK_Sector
+    SELECT DISTINCT ELIDEK_Sector, ELIDEK_Sector
     FROM program
     """
     cur.execute(query)
