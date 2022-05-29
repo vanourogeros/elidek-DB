@@ -30,18 +30,18 @@ def deleteProgram(Name):
     conn = db.connection
     cur = conn.cursor()
     form2 = ProgramUpdate()
-    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
+    #query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
     DELETE FROM program WHERE Name =  'Name'
     """
-    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
+    #query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
-        cur.execute(query1)
-        conn.commit()
+        #cur.execute(query1)
+        #conn.commit()
         cur.execute(query)
         conn.commit()
-        cur.execute(query2)
-        conn.commit()
+        #cur.execute(query2)
+        #conn.commit()
         conn.close()
         flash("Program deleted successfully", "success")
     except Exception as e:
