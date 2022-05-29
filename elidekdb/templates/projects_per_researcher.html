@@ -42,7 +42,14 @@
         Evaluation date :
         {{ create_eval_form.eval_date(class = "form-control", placeholder="Enter name", required = False) }}
         Evaluation grade:
-        {{ create_eval_form.eval_grade(class = "form-control", placeholder="Enter name", required = False) }}
+        {{ create_eval_form.eval_grade(class = "form-control", placeholder="Enter grade (1-10)", required = False) }}
+        {% if create_eval_form.eval_grade.errors %}
+                        <ul class = "errors">
+                            {% for error in create_eval_form.eval_grade.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+        {% endif %}
         <p></p>
         {{ create_eval_form.submit(class = "btn btn-primary btn-success") }}
         
