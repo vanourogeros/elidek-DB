@@ -3,10 +3,10 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>{{pageTitle}}</h3>
+    <a href='/programs'>
+        <button type="button" class="btn btn-outline-dark float-end">Back to programs</button>
+    </a>
     <div class="row" id="row">
-        <a href='/programs'>
-            <button type="button" class="btn btn-outline-dark float-end">Back to programs</button>
-        </a>
         <div class="col-md-12">
             <form class="form-horizontal" name="programs-dropdown" method="POST">
                 <!-- hidden_tag returns the form's security metadata -->
@@ -18,7 +18,7 @@
                     Choose an existing sector:
                     {{ form.sector(class = "form-select", placeholder="Choose sector", required = False) }}
                     <p></p>
-                    Or add new sector:<p>(Warning!: This choice will overwrite</p>
+                    Or add new sector:<p>(If this field is specified the previous choise of sector will be ignored)</p>
                     {{ form.sector2(id = "Enter new sector", required = False) }}
                     {% if form.sector.errors %}
                     <ul class = "errors">
