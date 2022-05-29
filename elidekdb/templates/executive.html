@@ -3,15 +3,16 @@
 
 <div class="container">
     {% include "flash_messages.html" %}
+    <h3>
+        ELIDEK Executives
+    </h3>
+    <a href='/executive/create'>
+        <button class="btn btn-success float-end">
+            Add executive
+        </button>
+    </a>
     <div class="row" id="row">
-        <h3>
-            ELIDEK Executives
-            <a href='/executive/create'>
-                <button class="btn btn-success float-end">
-                    Add executive
-                </button>
-            </a>
-        </h3>
+        
         <div class="col-md-12">
             
             <div class="card" id="card-container">
@@ -124,7 +125,7 @@
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
             <div class = "modal-body">
-                <h4>WARNING!</h4>Executive cannot be deleted if they have associated projects. 
+                <h4>WARNING!</h4>Executive cannot be deleted if they have any associated projects. 
             </div>
             <div class = "modal-footer">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>

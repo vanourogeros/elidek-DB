@@ -1,0 +1,117 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <h3>ELIDEK Programs</h3>
+    <a href='/organizations/create'>
+        <button class="btn btn-success float-end">
+            Add organization
+        </button>
+    </a>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Organization ID</th>
+                                <th>Acronym</th>
+                                <th>Name</th>
+                                <th>Street</th>
+                                <th>Street Number</th>
+                                <th>City</th>
+                                <th>Postal Code </th>
+                                <th>Type </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for org in organizations %}
+                            <tr>
+                                <td> {{ org.Organization_ID }} </td>
+                                <td> {{ org.Acronym }} </td>
+                                <td> {{ org.Name }} </td>
+                                <td> {{ org.Street }} </td>
+                                <td> {{ org.Street_Number}} </td>
+                                <td> {{ org.City }} </td>
+                                <td> {{ org.Postal_Code }} </td>
+                                <td> {{ org.Org_type }} </td>
+                                <td>
+                                    <a type="button" onclick="setModalFields(this)"
+                                    data-toggle="modal" 
+                                    data-name="{{org.Name}}"  data-id= "{{org.Organization_ID}}"
+                                    data-bs-toggle = "modal"
+                                    data-bs-target="#editModal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button style = "all: unset; cursor: pointer;" type = "button"
+                                    data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                    data-id= "{{org.Organization_ID}}" onclick = "setDeleteModalFields(this)">
+                                        <i class = "fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <p></p>
+        <a href='/organizations/create'>
+            <button class="btn btn-success float-end">
+                Add organization
+            </button>
+        </a>    
+        <p></p>
+    </div>
+</div>
+
+
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete organization</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                <h4>WARNING!</h4>Researchers that may work in this organization have to be deleted first. 
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function setModalFields(row) {
+        document.getElementById("id").value = row.getAttribute("data-id");
+        document.getElementById("Name").value = row.getAttribute("data-name");
+        document.getElementById("Summary").value = row.getAttribute("data-summary");
+        document.getElementById("modal-form").action = "/organizations/update/" + document.getElementById("id").value;
+        document.getElementById("modal-form").method = "POST";
+        // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // commented line above would prevent the default behavior of the submit button, that is, sending the
+        // form data with a post request to the determined address and subsequently closing the pop-up
+    }
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/organizations/delete/" +  row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
+    }
+
+</script>
+
+ 
+
+{% endblock %}
