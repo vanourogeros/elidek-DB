@@ -3,10 +3,10 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>{{pageTitle}}</h3>
+    <a href='/programs'>
+        <button type="button" class="btn btn-outline-dark float-end">Back to programs</button>
+    </a>
     <div class="row" id="row">
-        <a href='/programs'>
-            <button type="button" class="btn btn-outline-dark float-end">Back to programs</button>
-        </a>
         <div class="col-md-12">
             <form class="form-horizontal" name="programs-dropdown" method="POST">
                 <!-- hidden_tag returns the form's security metadata -->
