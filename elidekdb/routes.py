@@ -791,3 +791,18 @@ def many_no_work_projects_view():
 
     return render_template("no_work_projects.html", results=results, pageTitle = "Researchers on many projects with no work")
 
+@app.route("/organizations")
+def orgs_view():
+    cur = db.connection.cursor()   
+    query = """
+    SELECT *
+    FROM organization
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    organizations = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    cur.close()
+   
+
+    return render_template("organizations.html", organizations=organizations, pageTitle = "organizations Page")
+
