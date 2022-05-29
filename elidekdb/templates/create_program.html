@@ -18,7 +18,7 @@
                     Choose an existing sector:
                     {{ form.sector(class = "form-select", placeholder="Choose sector", required = False) }}
                     <p></p>
-                    Or add new sector:<p>(If this field is specified the previous choise of sector will be ignored)</p>
+                    Or add new sector:<p>(Note: This choice will overwrite the existing sector choice)</p>
                     {{ form.sector2(id = "Enter new sector", required = False) }}
                     {% if form.sector.errors %}
                     <ul class = "errors">
