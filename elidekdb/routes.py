@@ -30,18 +30,12 @@ def deleteProgram(Name):
     conn = db.connection
     cur = conn.cursor()
     form2 = ProgramUpdate()
-    #query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
     DELETE FROM program WHERE Name =  'Name'
     """
-    #query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
-        #cur.execute(query1)
-        #conn.commit()
         cur.execute(query)
         conn.commit()
-        #cur.execute(query2)
-        #conn.commit()
         conn.close()
         flash("Program deleted successfully", "success")
     except Exception as e:
@@ -193,18 +187,12 @@ def updateProject(projID):
 def deleteProject(projID):
     cur = db.connection.cursor() 
     
-    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
     DELETE FROM project WHERE Project_ID = {projID}
     """
-    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
-        cur.execute(query1)
-        #db.connection.commit()
         cur.execute(query)
-        #db.connection.commit()
-        cur.execute(query2)
-        #db.connection.commit()
+        db.connection.commit()
         db.connection.close()
         flash("Project deleted successfully", "success")
     except Exception as e:
@@ -313,17 +301,11 @@ def insertExec():
 def deleteexec(execID):
     conn = db.connection
     cur = conn.cursor()
-    query1 = """SET FOREIGN_KEY_CHECKS = 0"""
     query = f"""
         DELETE FROM executive WHERE Executive_ID =  {execID}
         """
-    query2 = """SET FOREIGN_KEY_CHECKS = 1"""
     try:
-        cur.execute(query1)
-        conn.commit()
         cur.execute(query)
-        conn.commit()
-        cur.execute(query2)
         conn.commit()
         conn.close()
         flash("Executive deleted successfully", "success")
