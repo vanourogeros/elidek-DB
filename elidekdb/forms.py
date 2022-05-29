@@ -56,3 +56,16 @@ class WorksOnDelete(FlaskForm):
     researcher_d = SelectField(u'Org ID', validate_choice=False)
     project_d = SelectField(u'Org ID', validate_choice=False)
     submit_d = SubmitField("Remove Researcher from Project")
+
+class EvalAdd(FlaskForm):
+    researcher = SelectField(u'eval ID', validate_choice=False)
+    project = SelectField(u'eval ID', validate_choice=False)
+    eval_grade = IntegerField(label = "Evaluation Grade", validators = [NumberRange(min=1, max=10)])
+    eval_date = DateField(label = "Eval Date", validators = [DataRequired(message = "Name is a required field.")])
+    submit = SubmitField("Add Project Evaluator")
+
+class EvalDelete(FlaskForm):
+    researcher_d = SelectField(u'eval ID', validate_choice=False)
+    project_d = SelectField(u'eval ID', validate_choice=False)
+    submit_d = SubmitField("Remove Project Evaluator")
+

@@ -30,6 +30,38 @@
     
     </form>
 
+    <p></p>
+
+    <form class="form-horizontal" name="create-form" method="POST">
+        <!-- hidden_tag returns the form's security metadata -->
+        {{ create_eval_form.hidden_tag() }}
+        Evaluator :
+        {{ create_eval_form.researcher(class = "form-select", placeholder="Enter name", required = False) }}
+        Project :
+        {{ create_eval_form.project(class = "form-select", placeholder="Enter name", required = False) }}
+        Evaluation date :
+        {{ create_eval_form.eval_date(class = "form-control", placeholder="Enter name", required = False) }}
+        Evaluation grade:
+        {{ create_eval_form.eval_grade(class = "form-control", placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ create_eval_form.submit(class = "btn btn-primary btn-success") }}
+        
+    </form>
+
+    <p></p>
+
+    <form class="form-horizontal" name="delete-form" method="POST">
+        {{ delete_eval_form.hidden_tag() }}
+        Evaluator :
+        {{ delete_eval_form.researcher_d(class = "form-select", placeholder="Enter name", required = False) }}
+        Project :
+        {{ delete_eval_form.project_d(class = "form-select", placeholder="Enter name", required = False) }}
+        <p></p>
+        {{ delete_eval_form.submit_d(class = "btn btn-primary btn-danger") }}
+    
+    </form>
+
+
     <div class="row" id="row">
         <div class="col-md-12">
             <div class="card" id="card-container">
@@ -41,6 +73,7 @@
                                 <th>Researcher Name</th>
                                 <th>Project ID</th>
                                 <th>Project Name</th>
+                                <th>Evaluator ID</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -51,8 +84,11 @@
                                 <td> {{ result.Full_Name }} </td>
                                 <td> {{ result.Project_ID }} </td>
                                 <td> {{ result.Project_Name }} </td>
+                                <td> {{ result.Evaluator_ID }} </td>
                             </tr>
                             {% endfor %}
+                            
+                            
                         </tbody>
                     </table>
                 </div>
