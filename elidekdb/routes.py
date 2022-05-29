@@ -806,3 +806,20 @@ def orgs_view():
 
     return render_template("organizations.html", organizations=organizations, pageTitle = "organizations Page")
 
+@app.route("/organizations/delete/<int:orgID>", methods = ["POST"])
+def delete_orgs(orgID):
+    cur = db.connection.cursor()   
+    query = f"""
+        DELETE FROM organization WHERE Organization_ID =  {orgID}
+        """
+    try:
+        cur.execute(query)
+        db.connection.commit()
+        db.connection.close()
+        flash("Organization deleted successfully", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect('/organizations')
+   
+
