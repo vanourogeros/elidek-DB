@@ -10,17 +10,24 @@
         {{ create_form.researcher(class = "form-select", placeholder="Enter name", required = False) }}
         Project :
         {{ create_form.project(class = "form-select", placeholder="Enter name", required = False) }}
+        Start date :
         {{ create_form.start_date(class = "form-control", placeholder="Enter name", required = False) }}
+        <p>
         {{ create_form.submit(class = "btn btn-primary btn-success") }}
+        </p>
     </form>
 
-        <p></p>
+    <p></p>
 
     <form class="form-horizontal" name="delete-form" method="POST">
         {{ delete_form.hidden_tag() }}
-        {{ delete_form.researcher_d(class = "form-control", placeholder="Enter name", required = False) }}
-        {{ delete_form.project_d(class = "form-control", placeholder="Enter name", required = False) }}
+        Researcher :
+        {{ delete_form.researcher_d(class = "form-select", placeholder="Enter name", required = False) }}
+        Project :
+        {{ delete_form.project_d(class = "form-select", placeholder="Enter name", required = False) }}
+        <p>
         {{ delete_form.submit_d(class = "btn btn-primary btn-danger") }}
+    </p>
     </form>
 
     <div class="row" id="row">

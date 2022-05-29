@@ -51,9 +51,9 @@ class WorksOnAdd(FlaskForm):
     researcher = SelectField(u'Org ID', validate_choice=False)
     project = SelectField(u'Org ID', validate_choice=False)
     start_date = DateField(label = "Start Date", validators = [DataRequired(message = "Name is a required field.")])
-    submit = SubmitField("Add Project to Researcher")
+    submit = SubmitField("Add Researcher to Project")
 
 class WorksOnDelete(FlaskForm):
     researcher_d = SelectField(u'Org ID', validate_choice=False)
     project_d = SelectField(u'Org ID', validate_choice=False)
-    submit_d = SubmitField("Remove Project from Researcher")
+    submit_d = SubmitField("Remove Researcher from Project")
