@@ -96,3 +96,14 @@ class editField(FlaskForm):
     field_name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
     checkbox_ef = RadioField(u'I want to edit an existing field', choices = ['Yes', 'No'])
     submit = SubmitField("Edit Field")
+
+
+class Org(FlaskForm):
+    orgcID = IntegerField(label = "Organization ID", validators = [Optional()] )
+    name = StringField(label = "Organization Name", validators = [DataRequired(message = "Name is a required field.")])
+    acr = StringField(label = "Acronym", validators = [DataRequired(message = "Acronym is a required field.")])
+    street = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
+    number = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field.")])
+    city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
+    pos = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
+    submit = SubmitField("Create") #it is used for executive insertion

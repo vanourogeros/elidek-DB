@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">
-                    <table class="table table-sm table-borderless">
+                    <table class="table table-striped table-sm table-borderless">
                         <thead>
                             <tr>
                                 <th>Organization ID</th>
@@ -39,8 +39,10 @@
                                 <td> {{ org.Org_type }} </td>
                                 <td>
                                     <a type="button" onclick="setModalFields(this)"
-                                    data-toggle="modal" 
+                                    data-toggle="modal" data-acr = "{{org.Acronym}}"
                                     data-name="{{org.Name}}"  data-id= "{{org.Organization_ID}}"
+                                    data-street="{{org.Street}}"  data-number= "{{org.Street_Number}}"
+                                    data-city="{{org.City}}" data-pos="{{org.Postal_Code}}" 
                                     data-bs-toggle = "modal"
                                     data-bs-target="#editModal">
                                         <i class="fa fa-edit"></i>
@@ -70,6 +72,80 @@
     </div>
 </div>
 
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Organization</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ form.hidden_tag() }}
+                    <div style="text-align: center;">
+                        <p><b>Edit organization with ID :
+                        <input type="text" name="id" id="id" readonly></b></p>
+                        <p>Acronym :
+                        {{ form.acr(id = "Acronym", required = False) }}</p>
+                        <p>Name :
+                        {{ form.name(id = "Name", required = False) }}</p>
+                        <p>
+                            <b>Address :</b>
+                        </p>
+                        <p>Street :
+                            {{ form.street(id = "Street", required = False) }}</p>
+                        <p>Street Number :
+                            {{ form.number(id = "Street Number", required = False) }}
+                        </p>
+                        <p>
+                            City :
+                            {{ form.city(id = "City", required = False) }}
+                        </p>
+                        <p>
+                            Postal Code :
+                            {{ form.pos(id = "Postal Code", required = False) }}
+                        </p>
+                    </div>
+                    <div>
+                        {% if form.name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.acr.errors %}
+                        <ul class = "errors">
+                            {% for error in form.acr.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.street.errors %}
+                        <ul class = "errors">
+                            {% for error in form.street.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.number.errors %}
+                        <ul class = "errors">
+                            {% for error in form.number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 <!-- Delete modal -->
@@ -98,7 +174,11 @@
     function setModalFields(row) {
         document.getElementById("id").value = row.getAttribute("data-id");
         document.getElementById("Name").value = row.getAttribute("data-name");
-        document.getElementById("Summary").value = row.getAttribute("data-summary");
+        document.getElementById("Acronym").value = row.getAttribute("data-acr");
+        document.getElementById("Street").value = row.getAttribute("data-street");
+        document.getElementById("Street Number").value = row.getAttribute("data-number");
+        document.getElementById("City").value = row.getAttribute("data-city");
+        document.getElementById("Postal Code").value = row.getAttribute("data-pos");
         document.getElementById("modal-form").action = "/organizations/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
