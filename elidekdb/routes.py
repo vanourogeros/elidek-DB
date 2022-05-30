@@ -1020,3 +1020,57 @@ def update_orgs(orgID):
                 flash(error, "danger")
     return redirect('/organizations')
    
+
+@app.route("/researchers", methods = ["GET", "POST"])
+def researchers_view():
+    cur = db.connection.cursor()   
+    form = updateRes()
+    query = """
+    SELECT *
+    FROM researcher
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    cur.close()
+
+   
+    cur = db.connection.cursor()   
+    cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
+    form.gender.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, Name FROM Organization")
+    form.orgID.choices = [entry for entry in cur.fetchall()]
+
+    return render_template("researchers.html", researchers=researchers, pageTitle = "Researchers Page", form=form)
+
+@app.route("/researchers/update/<int:Res_ID>", methods = ["GET", "POST"])
+def updateResearcher(Res_ID):
+    
+    cur = db.connection.cursor() 
+    form = updateRes()
+    cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
+    form.gender.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, Name FROM Organization")
+    form.orgID.choices = [entry for entry in cur.fetchall()]
+
+    if (form.validate_on_submit() and request.method == "POST"):
+        try:
+            name = str(request.form.get('name'))
+            surname = str(request.form.get('surname'))
+            gender = str(request.form.get('gender'))
+            birth_date  = str(request.form.get('birth_date'))
+            r_date = str(request.form.get('r_date'))
+            orgID = str(request.form.get('orgID'))
+            query = f"""
+            UPDATE Researcher SET Name = '{name}', Surname = '{surname}', Gender = '{gender}', Birth_Date = '{birth_date}', Recruitment_Date = '{r_date}', Organization_ID = '{orgID}'
+            WHERE Researcher_ID = {str(Res_ID)}
+            """
+            print(query)
+            cur.execute(query)
+            db.connection.commit()
+            flash("Researcher succesfully updated", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+       
+    
+    return redirect('/programs')

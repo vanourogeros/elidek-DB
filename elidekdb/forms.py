@@ -135,3 +135,28 @@ class Org(FlaskForm):
     city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     pos = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
     submit = SubmitField("Create") #it is used for executive insertion
+
+class updateRes(FlaskForm):
+    resID = IntegerField(label = "Researcher ID", validators = [Optional()] )
+    name = StringField(label = "Name", validators = [DataRequired(message = "Name is a required field.")])
+    surname = StringField(label = "Surname", validators = [DataRequired(message = "Acronym is a required field.")])
+    gender = SelectField(u'genders', validate_choice=False)
+    birth_date = DateField(label = "Start Date", validators = [DataRequired(message = "Birth Date is a required field.")])
+    r_date = DateField(label = "Start Date", validators = [DataRequired(message = "Recruitement Date is a required field.")])
+    orgID = SelectField(u'Org ID', validate_choice=False)
+    submit = SubmitField("Update")
+
+class createRes(FlaskForm):
+    resID = IntegerField(label = "Researcher ID", validators = [Optional()] )
+    name = StringField(label = "Name", validators = [DataRequired(message = "Name is a required field.")])
+    surname = StringField(label = "Surname", validators = [DataRequired(message = "Acronym is a required field.")])
+    gender = SelectField(u'genders', validate_choice=False)
+    birth_date = DateField(label = "Start Date", validators = [DataRequired(message = "Birth Date is a required field.")])
+    r_date = DateField(label = "Start Date", validators = [DataRequired(message = "Recruitement Date is a required field.")])
+    orgID = SelectField(u'Org ID', validate_choice=False)
+    submit = SubmitField("Create")
+
+class deleteField(FlaskForm):
+    resID = SelectField(u'Researcher ID', validate_choice=False)
+    checkbox_df = RadioField(u'I want to delete a researcher', choices = ['Yes', 'No'])
+    submit = SubmitField("Remove Researcher")
