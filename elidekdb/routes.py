@@ -109,6 +109,21 @@ def projects_view():
     form2.executive.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form2.organization.choices = [entry for entry in cur.fetchall()]
+    
+    query = f"""
+    SELECT  DISTINCT Program_ID, CONCAT(Program_ID, ', ',Name)
+    FROM program
+    """
+    cur.execute(query)
+    form2.associated_program.choices = [entry for entry in cur.fetchall()]
+    
+    query = f"""
+    SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Name, ' ', Surname, ', org: ', Organization_ID)  
+    FROM Researcher
+    ORDER BY Organization_ID, Researcher_ID
+    """
+    cur.execute(query)
+    form2.research_manager.choices = [entry for entry in cur.fetchall()]
 
 
     query = """
@@ -118,41 +133,50 @@ def projects_view():
     ORDER BY Project_ID
     """
 
-    if(request.method == "POST" and form.validate_on_submit()):
+    if(request.method == "POST" and form.submit_filter.data and form.validate_on_submit()):
         query = """
-        SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
-        FROM Project P INNER JOIN Executive E 
-        ON P.Executive_ID = E.Executive_ID
-        """
+    SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID, P.Program_ID AS P_Program, P.Research_Manager_ID AS P_remanager 
+    FROM Project P INNER JOIN Executive E 
+    ON P.Executive_ID = E.Executive_ID
+    ORDER BY Project_ID
+    """
         min_Start_Date = str(request.form.get('min_Start_Date'))
         max_Start_Date = str(request.form.get('max_Start_Date'))
         min_End_Date = str(request.form.get('min_End_Date'))
         max_End_Date = str(request.form.get('max_End_Date'))
         min_Duration = str(request.form.get('min_Duration'))
         max_Duration = str(request.form.get('max_Duration'))
-        executive = str(request.form.get('executive'))
+        executive = str(request.form.get('executive_f'))
+        flag = False
         print("form!")
         print(max_Start_Date)
         where_or_and = 'WHERE'
         if min_Start_Date != '' and min_Start_Date != 'None':
+            flag = True
             query += f'WHERE DATEDIFF(P.Start_Date, \'{min_Start_Date}\') > 0'
             where_or_and = '\n    AND'
         if max_Start_Date != '' and max_Start_Date != 'None':
+            flag = True
             query += f'{where_or_and} DATEDIFF(P.Start_Date, \'{max_Start_Date}\') < 0'
             where_or_and = '\n    AND'
         if min_End_Date != '' and min_End_Date != 'None':
+            flag = True
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{min_End_Date}\') > 0'
             where_or_and = '\n    AND'
         if max_End_Date != '' and max_End_Date != 'None':
+            flag = True
             query += f'{where_or_and} DATEDIFF(P.End_Date, \'{max_End_Date}\') < 0'
             where_or_and = '\n    AND'
-        if min_Duration != '':
+        if min_Duration != '' and min_Duration != 'None':
+            flag = True
             query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) > {min_Duration}'
             where_or_and = '\n    AND'
-        if max_Duration != '':
+        if max_Duration != '' and max_Duration != 'None':
+            flag = True
             query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) < {max_Duration}'
             where_or_and = '\n    AND'
-        if executive != '':
+        if executive != '' and executive != 'None':
+            flag = True
             query += f'{where_or_and} CONCAT(E.Name, \' \',  E.Surname) = \'{executive}\''
             where_or_and = '\n    AND'
 
@@ -174,9 +198,18 @@ def updateProject(projID):
     form2.executive.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form2.organization.choices = [entry for entry in cur.fetchall()]
-
+    name = str(request.form.get('name'))
+    summary = str(request.form.get('summary'))
+    funds = str(request.form.get('funds'))
+    executive = str(request.form.get('executive'))
+    start_date = str(request.form.get('start_date'))
+    end_date = str(request.form.get('end_date'))
+    organization = str(request.form.get('organization'))
+    associated_program = str(request.form.get('associated_program'))
+    research_manager = str(request.form.get('research_manager'))
+    #print(name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
     query = f"""
-    SELECT  DISTINCT Program_ID,Name
+    SELECT  DISTINCT Program_ID, CONCAT(Program_ID, ', ',Name)
     FROM program
     """
     cur.execute(query)
@@ -189,18 +222,6 @@ def updateProject(projID):
     """
     cur.execute(query)
     form2.research_manager.choices = [entry for entry in cur.fetchall()]
-
-    name = str(request.form.get('name'))
-    summary = str(request.form.get('summary'))
-    funds = str(request.form.get('funds'))
-    executive = str(request.form.get('executive'))
-    start_date = str(request.form.get('start_date'))
-    end_date = str(request.form.get('end_date'))
-    organization = str(request.form.get('organization'))
-    associated_program = str(request.form.get('associated_program'))
-    research_manager = str(request.form.get('research_manager'))
-    print(name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
-    
     if(form2.validate_on_submit()):
         
         query = f"""

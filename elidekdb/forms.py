@@ -24,8 +24,8 @@ class ProjectFilterForm(FlaskForm):
     max_End_Date = DateField(label = "End Date To:", validators = [Optional()])
     min_Duration = IntegerField(label = "Duration From (in days)", validators = [Optional(), NumberRange(min=365, max=1460)])
     max_Duration = IntegerField(label = "Duration To (in days)", validators = [Optional(), NumberRange(min=365, max=1460)])
-    executive = StringField(label = "Executive Name", validators = [Optional()])
-    submit = SubmitField("Filter")
+    executive_f = StringField(label = "Executive Name", validators = [Optional()])
+    submit_filter = SubmitField("Filter")
 
 class ProjectCreate(FlaskForm):
     projID = IntegerField(label = "Project ID")
