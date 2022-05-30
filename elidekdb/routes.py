@@ -800,6 +800,7 @@ def many_no_work_projects_view():
 @app.route("/organizations")
 def orgs_view():
     cur = db.connection.cursor()   
+    form = Org()
     query = """
     SELECT *
     FROM organization
@@ -810,7 +811,7 @@ def orgs_view():
     cur.close()
    
 
-    return render_template("organizations.html", organizations=organizations, pageTitle = "organizations Page")
+    return render_template("organizations.html", organizations=organizations, pageTitle = "organizations Page", form=form)
 
 @app.route("/organizations/delete/<int:orgID>", methods = ["POST"])
 def delete_orgs(orgID):
@@ -827,5 +828,32 @@ def delete_orgs(orgID):
         flash(str(e), "danger")
 
     return redirect('/organizations')
-   
 
+@app.route("/organizations/update/<int:orgID>", methods = ["POST"])
+def update_orgs(orgID):
+    cur = db.connection.cursor()   
+    form = Org()
+    name = str(request.form.get('name'))
+    acr = str(request.form.get('acr'))
+    street = str(request.form.get('street'))
+    num = request.form.get('number')
+
+    if(form.validate_on_submit()):
+        query = f"""
+        UPDATE organization SET Acronym = '{acr}', Name = '{name}', Street = '{street}', Street_Number = {num} WHERE Organization_ID =  {orgID}
+        """
+        print(query)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Organization updated successfully", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect('/organizations')
+   
