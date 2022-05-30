@@ -147,6 +147,26 @@
     </div>
 </div>
 
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete Researcher</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                <h4>WARNING! 😡</h4>Researcher cannot be deleted if it has associated entities. 
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function setModalFields(row) {
@@ -159,6 +179,11 @@
         document.getElementById("Organization ID").value = row.getAttribute("data-org");
         document.getElementById("modal-form").action = "/researchers/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
+    }
+        function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/researchers/delete/" + row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
+    
     }
 
 </script>
