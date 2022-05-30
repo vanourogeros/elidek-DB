@@ -13,6 +13,4 @@ DROP TABLE IF EXISTS research_field;
 DROP TABLE IF EXISTS university;
 DROP TABLE IF EXISTS works_on;
 DROP TABLE IF EXISTS work_to_be_submitted;
-DROP VIEW IF EXISTS projects_per_researcher;
-DROP VIEW IF EXISTS projects_per_field;
 SET FOREIGN_KEY_CHECKS = 1;
