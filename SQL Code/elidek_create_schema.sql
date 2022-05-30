@@ -226,6 +226,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS Org_Phone (
   Organization_ID INT UNSIGNED NOT NULL,
   Phone_Number CHAR(10) NOT NULL,
+  CONSTRAINT chk_phone CHECK (Phone_Number not like '%[^0-9]%'),
   -- CONSTRAINT chk_phone CHECK REGEXP('[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
   PRIMARY KEY (Organization_ID, Phone_Number),
   CONSTRAINT fk_Organization_ID
@@ -261,15 +262,19 @@ DELIMITER $
 CREATE TRIGGER chk_Eval_Not_Work_On BEFORE INSERT ON Evaluation 
 FOR EACH ROW
 BEGIN
-    IF ((SELECT COUNT(*) FROM Works_On WHERE Project_ID = new.Project_ID AND Researcher_ID = new.Researcher_ID) > 0) THEN 
+    IF ((SELECT Organization_ID FROM Researcher WHERE Researcher_ID = new.Researcher_ID) = (SELECT Organization_ID FROM Project WHERE Project_ID = new.Project_ID) ) THEN 
     SIGNAL SQLSTATE '45000'
-           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - A researcher cannot evaluate and work on the same project';
+           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - A researcher cannot evaluate a project from their organization';
     END IF;
     
-    IF (DATEDIFF(new.Evaluation_Date, (SELECT End_Date FROM Project WHERE Project_ID = new.Project_ID AND Research_Manager_ID = new.Researcher_ID)) > 0
-		OR DATEDIFF(new.Evaluation_Date, (SELECT Start_Date FROM Project WHERE Project_ID = new.Project_ID AND Research_Manager_ID = new.Researcher_ID) < 0)) THEN 
+    IF (DATEDIFF(new.Evaluation_Date, (SELECT Start_Date FROM Project WHERE Project_ID = new.Project_ID) > 0)) THEN 
     SIGNAL SQLSTATE '45000'
-           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - Evaluation date must be between project start and end date';
+           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - Evaluation date must be before project start date';
+    END IF;
+    
+    IF (new.Project_ID IN (SELECT Project_ID FROM evaluation)) THEN
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - Project already has an evaluator';
     END IF;
 END$   
 DELIMITER ; 
@@ -305,6 +310,34 @@ BEGIN
     END IF;
 END$   
 DELIMITER ; 
+
+-- -----------------------------------------------------
+-- View 1: Projects per Researcher
+-- -----------------------------------------------------
+
+
+CREATE VIEW projects_per_researcher AS
+SELECT Researcher.Researcher_ID,
+	   CONCAT(Researcher.Name, ' ', Researcher.Surname) AS `Full_Name`,
+       Researcher.Organization_ID AS Org_ID,
+       Project.Project_ID,
+       Project.Name AS `Project_Name`
+FROM Researcher INNER JOIN Works_On ON Researcher.Researcher_ID=Works_On.Researcher_ID
+INNER JOIN Project on Works_On.Project_ID=Project.Project_ID
+ORDER BY Researcher.Researcher_ID;
+
+-- -----------------------------------------------------
+-- View 2: Projects per Field
+-- -----------------------------------------------------
+
+CREATE VIEW projects_per_field AS
+SELECT Project.Project_ID,
+       Project.Name AS `Project_Name`,
+       Research_Field.Field_ID,
+       Research_Field.Name as `Field_Name`
+FROM Project INNER JOIN Refers_To ON Project.Project_ID=Refers_To.Project_ID
+INNER JOIN Research_Field on Refers_To.Field_ID=Research_Field.Field_ID
+ORDER BY Field_ID;
 
 
 

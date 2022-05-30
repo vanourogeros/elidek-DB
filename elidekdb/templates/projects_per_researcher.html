@@ -12,6 +12,8 @@
         {{ create_form.project(class = "form-select", placeholder="Enter name", required = False) }}
         Start date :
         {{ create_form.start_date(class = "form-control", placeholder="Enter name", required = False) }}
+        I want to add a researcher to a project:
+        {{create_form.checkbox}}
         <p></p>
         {{ create_form.submit(class = "btn btn-primary btn-success") }}
         
@@ -25,6 +27,8 @@
         {{ delete_form.researcher_d(class = "form-select", placeholder="Enter name", required = False) }}
         Project :
         {{ delete_form.project_d(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to remove a researcher from a project:
+        {{delete_form.checkbox_d}}
         <p></p>
         {{ delete_form.submit_d(class = "btn btn-primary btn-danger") }}
     
@@ -32,7 +36,7 @@
 
     <p></p>
 
-    <form class="form-horizontal" name="create-form" method="POST">
+    <form class="form-horizontal" name="create-eval-form" method="POST">
         <!-- hidden_tag returns the form's security metadata -->
         {{ create_eval_form.hidden_tag() }}
         Evaluator :
@@ -43,6 +47,8 @@
         {{ create_eval_form.eval_date(class = "form-control", placeholder="Enter name", required = False) }}
         Evaluation grade:
         {{ create_eval_form.eval_grade(class = "form-control", placeholder="Enter grade (1-10)", required = False) }}
+        I want to add an evaluator to a project:
+        {{create_eval_form.checkbox_ea}}
         {% if create_eval_form.eval_grade.errors %}
                         <ul class = "errors">
                             {% for error in create_eval_form.eval_grade.errors %}
@@ -57,12 +63,14 @@
 
     <p></p>
 
-    <form class="form-horizontal" name="delete-form" method="POST">
+    <form class="form-horizontal" name="delete-eval-form" method="POST">
         {{ delete_eval_form.hidden_tag() }}
         Evaluator :
         {{ delete_eval_form.researcher_d(class = "form-select", placeholder="Enter name", required = False) }}
         Project :
         {{ delete_eval_form.project_d(class = "form-select", placeholder="Enter name", required = False) }}
+        I want to remove an evaluator from a project (please make sure to put an evaluator to the project ASAP):
+        {{delete_eval_form.checkbox_ed}}
         <p></p>
         {{ delete_eval_form.submit_d(class = "btn btn-primary btn-danger") }}
     
@@ -78,6 +86,7 @@
                             <tr>
                                 <th>Researcher ID</th>
                                 <th>Researcher Name</th>
+                                <th>Org. ID</th>
                                 <th>Project ID</th>
                                 <th>Project Name</th>
                                 <th>Evaluator ID</th>
@@ -89,6 +98,7 @@
                             <tr>
                                 <td> {{ result.Researcher_ID }} </td>
                                 <td> {{ result.Full_Name }} </td>
+                                <td> {{ result.Org_ID }} </td>
                                 <td> {{ result.Project_ID }} </td>
                                 <td> {{ result.Project_Name }} </td>
                                 <td> {{ result.Evaluator_ID }} </td>

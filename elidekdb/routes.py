@@ -329,9 +329,14 @@ def projects_per_researcher_view():
 
     cur = db.connection.cursor() 
     query = """
-    SELECT P.Researcher_ID, P.Full_Name, P.Project_ID, P.Project_Name, E.Researcher_ID AS Evaluator_ID
+    SELECT DISTINCT P.Researcher_ID, P.Full_Name, P.Org_ID, P.Project_ID, P.Project_Name, E.Researcher_ID AS Evaluator_ID
     FROM projects_per_researcher P INNER JOIN Evaluation E
-    on P.Project_ID = E.Project_ID;
+    on P.Project_ID = E.Project_ID
+    UNION
+    SELECT Researcher_ID, Full_Name, Org_ID, Project_ID, Project_Name, NULL
+    FROM projects_per_researcher
+    WHERE Project_ID NOT IN (SELECT Project_ID FROM Evaluation)
+    ORDER BY Researcher_ID
     """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
@@ -340,7 +345,7 @@ def projects_per_researcher_view():
    
     # Set researcher fields 
     query = """
-    SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name)
+    SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name, ' Org. ID: ', Org_ID)
     FROM projects_per_researcher
     """
     cur.execute(query)
@@ -350,7 +355,7 @@ def projects_per_researcher_view():
 
     # Set project fields 
     query = """
-    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
+    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name, '- Org. ID: ', Org_ID)
     FROM projects_per_researcher
     ORDER BY Project_ID
     """
@@ -361,7 +366,7 @@ def projects_per_researcher_view():
     
     # Select researcher - evaluator
     query = """
-    SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name)
+    SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name, '- Org. ID: ', Org_ID)
     FROM projects_per_researcher
     """
     cur.execute(query)
@@ -371,11 +376,17 @@ def projects_per_researcher_view():
 
     # Select project to be evaluated
     query = """
-    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
+    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name, '- Org. ID: ', Org_ID)
     FROM projects_per_researcher
     ORDER BY Project_ID
     """
-    cur.execute(query)
+    query2 = """
+    SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name, '- Org. ID: ', Org_ID)
+    FROM projects_per_researcher
+    WHERE Project_ID NOT IN (SELECT Project_ID FROM Evaluation)
+    ORDER BY Project_ID
+    """
+    cur.execute(query2)
     create_eval_form.project.choices = [entry for entry in cur.fetchall()]
     cur.execute(query)
     delete_eval_form.project_d.choices = [entry for entry in cur.fetchall()]
@@ -383,7 +394,7 @@ def projects_per_researcher_view():
     
 
     #works on insert
-    if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('researcher') != 'None'):
+    if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('checkbox') == 'Yes'):
         try:
             researcher = request.form.get('researcher')
             project = request.form.get('project')
@@ -403,7 +414,7 @@ def projects_per_researcher_view():
             if '1054' not in str(e):
                 flash(str(e), "danger")
     #works on delete
-    if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('researcher_d') != 'None'):
+    if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('checkbox_d') == 'Yes'):
         try:
             researcher = request.form.get('researcher_d')
             project = request.form.get('project_d')
@@ -423,7 +434,7 @@ def projects_per_researcher_view():
                 flash(str(e), "danger")
 
     #evals insert           
-    if(request.method == "POST" and create_eval_form.validate_on_submit() and request.form.get('researcher') != 'None'):
+    if(request.method == "POST" and create_eval_form.validate_on_submit() and request.form.get('checkbox_ea') == 'Yes'):
         try:
             researcher = request.form.get('researcher')
             project = request.form.get('project')
@@ -445,7 +456,7 @@ def projects_per_researcher_view():
                 flash(str(e), "danger")
 
     #evals delete
-    if(request.method == "POST" and delete_eval_form.validate_on_submit() and request.form.get('researcher_d') != 'None'):
+    if(request.method == "POST" and delete_eval_form.validate_on_submit() and request.form.get('checkbox_ed') == 'Yes'):
         try:
             researcher = request.form.get('researcher_d')
             project = request.form.get('project_d')

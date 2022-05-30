@@ -51,11 +51,13 @@ class WorksOnAdd(FlaskForm):
     researcher = SelectField(u'Researcher ID', validate_choice=False)
     project = SelectField(u'Project ID', validate_choice=False)
     start_date = DateField(label = "Start Date", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox = RadioField(u'I want to add a researcher to a project', choices = ['Yes', 'No'])
     submit = SubmitField("Add Researcher to Project")
 
 class WorksOnDelete(FlaskForm):
     researcher_d = SelectField(u'Org ID', validate_choice=False)
     project_d = SelectField(u'Org ID', validate_choice=False)
+    checkbox_d = RadioField(u'I want to remove a researcher from a project', choices = ['Yes', 'No'])
     submit_d = SubmitField("Remove Researcher from Project")
 
 class EvalAdd(FlaskForm):
@@ -63,11 +65,13 @@ class EvalAdd(FlaskForm):
     project = SelectField(u'eval ID', validate_choice=False)
     eval_grade = IntegerField(label = "Evaluation Grade", validators = [NumberRange(min=1, max=10)])
     eval_date = DateField(label = "Eval Date", validators = [DataRequired(message = "Name is a required field.")])
+    checkbox_ea = RadioField(u'I want to add an evaluator to a project', choices = ['Yes', 'No'])
     submit = SubmitField("Add Project Evaluator")
 
 class EvalDelete(FlaskForm):
     researcher_d = SelectField(u'eval ID', validate_choice=False)
     project_d = SelectField(u'eval ID', validate_choice=False)
+    checkbox_ed = RadioField(u'I want to remove an evaluator from a project', choices = ['Yes', 'No'])
     submit_d = SubmitField("Remove Project Evaluator")
 
 class AddProjectField(FlaskForm):
