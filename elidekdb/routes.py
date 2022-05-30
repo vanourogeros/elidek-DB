@@ -92,6 +92,7 @@ def projects_view():
     SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
     FROM Project P INNER JOIN Executive E 
     ON P.Executive_ID = E.Executive_ID
+    ORDER BY Project_ID
     """
 
     if(request.method == "POST" and form.validate_on_submit()):
