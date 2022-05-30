@@ -27,7 +27,7 @@ for i in range(DUMMY_DATA_NUMBER):
 ########################### Program ###########################
 
 TABLE_NAME = "Program"
-TABLE_COLUMNS = ["Name", "ELIDEK_Sector"]
+TABLE_COLUMNS = ["Program_ID", "Name", "ELIDEK_Sector"]
 sectors = ['Food Industry Projects', 'Environmental Projects',
            'Outer Space Public Relations', 'Renewable Energy Sources',
            'Exotic Religions', 'Marine Research Projects',
@@ -35,10 +35,11 @@ sectors = ['Food Industry Projects', 'Environmental Projects',
 Programs = []
 
 for i in range(DUMMY_DATA_NUMBER):
+    ID = 3119000+i
     Name = fake.text(max_nb_chars=20)
     Programs.append(Name)
     sector = sectors[i % 7]
-    content += f'INSERT INTO {TABLE_NAME} ({",".join(TABLE_COLUMNS)}) VALUES ("{Name}","{sector}");\n'
+    content += f'INSERT INTO {TABLE_NAME} ({",".join(TABLE_COLUMNS)}) VALUES ("{ID}","{Name}","{sector}");\n'
 
 ########################### Organization ###########################
 
