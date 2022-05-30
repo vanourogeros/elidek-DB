@@ -1,0 +1,99 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <a href='/organizations'>
+            <button type="button" class="btn btn-outline-dark float-end">Back to organizations</button>
+        </a>
+        <div class="col-md-12">
+            <form class="form-horizontal" name="researcher-form" method="POST">
+                <!-- hidden_tag returns the form's security metadata -->
+                {{ form.hidden_tag() }}
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.orgID.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.orgID(class = "form-control", placeholder="Enter Organization ID (optional)", required = False) }}
+                    {% if form.orgID.errors %}
+                    <ul class = "errors">
+                        {% for error in form.orgID.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.acr.label(class = "form-label") }}
+                    {{ form.acr(class = "form-control", placeholder="Enter acronym", required = False) }}
+                    {% if form.acr.errors %}
+                    <ul class = "errors">
+                        {% for error in form.surname.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.name.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.name(class = "form-control", placeholder="Enter organization name", required = False) }}
+                    {% if form.name.errors %}
+                    <ul class = "errors">
+                        {% for error in form.name.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div> 
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.street.label(class = "form-label") }}
+                    {{ form.street(class = "form-control", placeholder="Enter street address", required = False) }}
+                    {% if form.street.errors %}
+                    <ul class = "errors">
+                        {% for error in form.street.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.number.label(class = "form-label") }}
+                    {{ form.number(class = "form-control", placeholder="Enter street number", required = False) }}
+                    {% if form.number.errors %}
+                    <ul class = "errors">
+                        {% for error in form.number.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.pos.label(class = "form-label") }}
+                    {{ form.pos(class = "form-control", placeholder="Enter postal code", required = False) }}
+                    {% if form.pos.errors %}
+                    <ul class = "errors">
+                        {% for error in form.pos.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+              
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.type.label(class = "form-label") }}
+                    {{ form.type(class = "form-select", placeholder="Enter orgID", required = False) }}
+                    {% if form.type %}
+                    <ul class = "errors">
+                        {% for error in type %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
+                <p></p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

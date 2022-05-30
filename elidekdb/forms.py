@@ -127,14 +127,16 @@ class editField(FlaskForm):
 
 
 class Org(FlaskForm):
-    orgcID = IntegerField(label = "Organization ID", validators = [Optional()] )
+    orgID = IntegerField(label = "Organization ID", validators = [Optional()] )
     name = StringField(label = "Organization Name", validators = [DataRequired(message = "Name is a required field.")])
     acr = StringField(label = "Acronym", validators = [DataRequired(message = "Acronym is a required field.")])
     street = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     number = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field.")])
     city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
-    pos = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
+    pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
+    type = SelectField(u'Type', validate_choice=False)
     submit = SubmitField("Create") #it is used for executive insertion
+
 
 class updateRes(FlaskForm):
     resID = IntegerField(label = "Researcher ID", validators = [Optional()] )

@@ -1021,6 +1021,50 @@ def update_orgs(orgID):
     return redirect('/organizations')
    
 
+@app.route("/organizations/create", methods = ["GET","POST"])
+def createOrg():
+    cur = db.connection.cursor() 
+    form = Org()
+
+    cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
+    form.type.choices = [entry for entry in cur.fetchall()]
+
+    id = request.form.get('orgID')
+    name = str(request.form.get('name'))
+    acr = str(request.form.get('acr'))
+    street = str(request.form.get('street'))
+    number  = request.form.get('number')
+    city = str(request.form.get('city'))
+    pos = request.form.get('orgID')
+    res_id = 0
+
+    if(request.method == "POST" and form.validate_on_submit()):
+        
+        
+        try:
+            query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
+            cur = db.connection.cursor()
+            if (id == '0' or id == ''):
+
+                cur.execute(query1)
+                temp = cur.fetchall()
+                res_id = int(temp[0][0] + 1)
+            else:
+                res_id = id
+            query2 = f"""
+            INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type) VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
+            """
+            cur.execute(query2)
+            db.connection.commit()
+            cur.close()
+            flash("Organization created successfully", "success")
+
+        except Exception as e: ## OperationalError
+            flash(str(e), "danger")
+
+    ## else, response for GET request
+    return render_template("create_organization.html", pageTitle = "Create Organization", form = form)  
+
 @app.route("/researchers", methods = ["GET", "POST"])
 def researchers_view():
     cur = db.connection.cursor()   
