@@ -26,6 +26,13 @@ class ProjectFilterForm(FlaskForm):
 class ProjectCreate(FlaskForm):
     name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
 
+class AddDeleteWork(FlaskForm):
+    title = StringField(label = "Executive Name", validators = [DataRequired(message = "Title is a required field.")])
+    summary = TextAreaField(label = "Project Summary", validators = [DataRequired(message = "Summary is a required field.")]) 
+    submission_date = DateField(label = "Submission Date")
+    add_or_delete = RadioField(u'Add/Delete', choices = ['Add Selected Work', 'Delete Selected Work'])
+    submit = SubmitField("Do it  ⚠️Caution to your choice⚠️")
+
 class ExecUpdate(FlaskForm):
     execID = IntegerField(label = "Executive ID", validators = [Optional()] )
     name = StringField(label = "Executive Name", validators = [DataRequired(message = "Name is a required field.")])

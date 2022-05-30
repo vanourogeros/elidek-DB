@@ -206,7 +206,7 @@ def createProject():
     return redirect('/projects')
 
 
-@app.route("/projects/<int:projectID>")
+@app.route("/projects/<int:projectID>", methods = ["GET", "POST"])
 def fetch_project_researchers(projectID):
     cur = db.connection.cursor()   
 
@@ -222,9 +222,39 @@ def fetch_project_researchers(projectID):
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     proj_researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+    query = f"""
+    SELECT *
+    FROM Work_To_Be_Submitted
+    WHERE Project_ID = {projectID}
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    works = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+    work_form = AddDeleteWork()
+    if (request.method == "POST" and work_form.validate_on_submit()):
+        try:
+            title = str(request.form.get("title"))
+            summary = str(request.form.get("summary"))
+            submission_date = str(request.form.get("submission_date"))
+            add_or_delete = str(request.form.get("add_or_delete"))
+            query = f"""
+            INSERT INTO Work_To_Be_Submitted (Title, Project_ID, Summary, Submission_Date)
+            VALUES ("{title}", {projectID}, "{summary}", "{submission_date}")
+            """ if add_or_delete == 'Add Selected Work' else f"""
+            DELETE FROM Work_To_Be_Submitted Where Project_ID = {projectID} AND Title = "{title}"
+            """
+            print(query)
+            cur.execute(query)
+            flash("Request completed successfully", "success")
+            db.connection.commit()
+        except Exception as e:
+            flash(str(e), "danger")
     cur.close()
 
-    return render_template("fetch_project.html", proj_researchers=proj_researchers, pageTitle = f"Researchers working on Project with ID {projectID}")
+    return render_template("fetch_project.html", proj_researchers=proj_researchers, works=works, 
+    pageTitle = f"Researchers working on Project with ID {projectID}", ID = f"{projectID}", work_form=work_form)
 
 @app.route("/executive", methods = ["GET", "POST"])
 def executive_view():
@@ -411,7 +441,7 @@ def projects_per_researcher_view():
      create_form = create_form, delete_form = delete_form)
         except Exception as e:
             print("not a creation")
-            if '1054' not in str(e):
+            if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
     #works on delete
     if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('checkbox_d') == 'Yes'):
@@ -430,7 +460,7 @@ def projects_per_researcher_view():
      create_form = create_form, delete_form = delete_form)
         except Exception as e:
             print("not a deletion")
-            if '1054' not in str(e):
+            if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
     #evals insert           
@@ -452,7 +482,7 @@ def projects_per_researcher_view():
      create_eval_form = create_eval_form, delete_eval_form = delete_eval_form)
         except Exception as e:
             print("not a creation")
-            if '1054' not in str(e):
+            if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
     #evals delete
@@ -472,7 +502,7 @@ def projects_per_researcher_view():
      create_eval_form = create_eval_form, delete_eval_form = delete_eval_form)
         except Exception as e:
             print("not a deletion")
-            if '1054' not in str(e):
+            if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
 

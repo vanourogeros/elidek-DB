@@ -32,5 +32,47 @@
             </div>
         </div>
     </div>
+    <form class="form-horizontal" name="work-form" method="POST">
+        <!-- hidden_tag returns the form's security metadata -->
+        {{ work_form.hidden_tag() }}
+        Title:
+        {{ work_form.title(class = "form-select", placeholder="Enter name", required = False) }}
+        Summary:
+        {{ work_form.summary(class = "form-select", placeholder="Enter name", required = False) }}
+        Submission date:
+        {{ work_form.submission_date(class = "form-control", placeholder="Enter name", required = False) }}
+        I want to do the following (for deletion only the title is needed):
+        {{work_form.add_or_delete}}
+        <p></p>
+        {{ work_form.submit(class = "btn btn-primary") }}
+        
+    </form>
+    <div class="row" id="row">
+        <h3>Work to be submitted for project with ID {{ID}}</h3>
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Summary</th>
+                                <th>Submission Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for work in works %}
+                            <tr>
+                                <td> {{ work.Title }} </td>
+                                <td> {{ work.Summary }} </td>
+                                <td> {{ work.Submission_Date }} </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
