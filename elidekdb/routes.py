@@ -1119,4 +1119,21 @@ def createResearcher():
             flash(str(e), "danger")
 
     ## else, response for GET request
-    return render_template("create_researcher.html", pageTitle = "Create Researcher", form = form)   
+    return render_template("create_researcher.html", pageTitle = "Create Researcher", form = form)  
+
+@app.route("/researchers/delete/<int:Researcher_ID>", methods = ["POST"])
+def deleteResearcher(Researcher_ID):
+    cur = db.connection.cursor() 
+    
+    query = f"""
+    DELETE FROM Researcher WHERE Researcher_ID = {Researcher_ID}
+    """
+    try:
+        cur.execute(query)
+        db.connection.commit()
+        db.connection.close()
+        flash("Researcher deleted successfully", "success")
+    except Exception as e:
+        flash(str(e), "danger")
+
+    return redirect('/researchers') 
