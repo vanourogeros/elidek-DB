@@ -1,16 +1,17 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
-from elidekdb import app, db ## initially created by __init__.py, need to be used here
+from elidekdb import app, db  # initially created by __init__.py, need to be used here
 from elidekdb.forms import *
+
 
 @app.route("/")
 def index():
-    return render_template("landing.html", pageTitle = "Landing Page")
+    return render_template("landing.html", pageTitle="Landing Page")
 
-    
+
 @app.route("/programs")
 def programs_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     query = """
     SELECT *
     FROM Program
@@ -21,16 +22,17 @@ def programs_view():
     #programs = cur.fetchall()
     update_form = ProgramUpdate()
     cur.close()
-    #print(programs[1])
+    # print(programs[1])
 
     return render_template("programs.html", programs=programs,
-     pageTitle = "Programs Page", update_form = update_form)
+                           pageTitle="Programs Page", update_form=update_form)
 
-@app.route("/programs/update/<int:program_ID>", methods = ["POST"])
+
+@app.route("/programs/update/<int:program_ID>", methods=["POST"])
 def updateProgram(program_ID):
     update_form = ProgramUpdate()
-    cur = db.connection.cursor() 
-    
+    cur = db.connection.cursor()
+
     if (update_form.validate_on_submit()):
         try:
             name = str(request.form.get('name'))
@@ -44,10 +46,11 @@ def updateProgram(program_ID):
             flash("Program succesfully updated", "success")
         except Exception as e:
             flash(str(e), "danger")
-    
+
     return redirect('/programs')
 
-@app.route("/programs/delete/<int:program_ID>", methods = ["POST"])
+
+@app.route("/programs/delete/<int:program_ID>", methods=["POST"])
 def deleteProgram(program_ID):
     conn = db.connection
     cur = conn.cursor()
@@ -66,10 +69,10 @@ def deleteProgram(program_ID):
     return redirect('/programs')
 
 
-@app.route("/programs/create", methods = ["GET", "POST"])
+@app.route("/programs/create", methods=["GET", "POST"])
 def newProgram():
-    cur = db.connection.cursor()   
-    form = ProgramCreate()  
+    cur = db.connection.cursor()
+    form = ProgramCreate()
     query = """
     SELECT DISTINCT ELIDEK_Sector, ELIDEK_Sector
     FROM program
@@ -88,35 +91,34 @@ def newProgram():
         INSERT INTO program (Program_ID, Name, ELIDEK_Sector) VALUES ({id}, '{name}', '{sector}')
         """
         try:
-            cur = db.connection.cursor() 
+            cur = db.connection.cursor()
             cur.execute(query)
             db.connection.commit()
             cur.close()
             flash("Program created successfully", "success")
         except Exception as e:
             flash(str(e), "danger")
-    
-    return render_template("create_program.html", pageTitle = "Create Program", form = form)
+
+    return render_template("create_program.html", pageTitle="Create Program", form=form)
 
 
-
-@app.route("/projects", methods = ['GET', 'POST'])
+@app.route("/projects", methods=['GET', 'POST'])
 def projects_view():
     form = ProjectFilterForm()
     form2 = ProjUpdate()
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
     form2.executive.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form2.organization.choices = [entry for entry in cur.fetchall()]
-    
+
     query = f"""
     SELECT  DISTINCT Program_ID, CONCAT(Program_ID, ', ',Name)
     FROM program
     """
     cur.execute(query)
     form2.associated_program.choices = [entry for entry in cur.fetchall()]
-    
+
     query = f"""
     SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Name, ' ', Surname, ', org: ', Organization_ID)  
     FROM Researcher
@@ -124,7 +126,6 @@ def projects_view():
     """
     cur.execute(query)
     form2.research_manager.choices = [entry for entry in cur.fetchall()]
-
 
     query = """
     SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID, P.Program_ID AS P_Program, P.Research_Manager_ID AS P_remanager 
@@ -184,16 +185,17 @@ def projects_view():
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     projects = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
-    #print(projects)
+    # print(projects)
     #programs = cur.fetchall()
     cur.close()
-    return render_template("projects.html", projects=projects, pageTitle = "Projects Page", form = form, form2 = form2)
+    return render_template("projects.html", projects=projects, pageTitle="Projects Page", form=form, form2=form2)
 
-@app.route("/projects/update/<int:projID>", methods = ["POST"])
+
+@app.route("/projects/update/<int:projID>", methods=["POST"])
 def updateProject(projID):
     print("awoogra!!!")
     form2 = ProjUpdate()
-    cur = db.connection.cursor() 
+    cur = db.connection.cursor()
     cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
     form2.executive.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
@@ -207,14 +209,14 @@ def updateProject(projID):
     organization = str(request.form.get('organization'))
     associated_program = str(request.form.get('associated_program'))
     research_manager = str(request.form.get('research_manager'))
-    #print(name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
+    # print(name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
     query = f"""
     SELECT  DISTINCT Program_ID, CONCAT(Program_ID, ', ',Name)
     FROM program
     """
     cur.execute(query)
     form2.associated_program.choices = [entry for entry in cur.fetchall()]
-    
+
     query = f"""
     SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Name, ' ', Surname, ', org: ', Organization_ID)  
     FROM Researcher
@@ -223,7 +225,7 @@ def updateProject(projID):
     cur.execute(query)
     form2.research_manager.choices = [entry for entry in cur.fetchall()]
     if(form2.validate_on_submit()):
-        
+
         query = f"""
         UPDATE project SET Name = '{name}', Summary = '{summary}',
         Project_Funds = '{funds}', Start_Date = '{start_date}',
@@ -244,12 +246,13 @@ def updateProject(projID):
         for category in form2.errors.values():
             for error in category:
                 flash(error, "danger")
-    return redirect(url_for("projects_view"))  
+    return redirect(url_for("projects_view"))
 
-@app.route("/projects/delete/<int:projID>", methods = ["POST"])
+
+@app.route("/projects/delete/<int:projID>", methods=["POST"])
 def deleteProject(projID):
-    cur = db.connection.cursor() 
-    
+    cur = db.connection.cursor()
+
     query = f"""
     DELETE FROM project WHERE Project_ID = {projID}
     """
@@ -263,21 +266,23 @@ def deleteProject(projID):
 
     return redirect('/projects')
 
-@app.route("/projects/create", methods = ["GET","POST"])
+
+@app.route("/projects/create", methods=["GET", "POST"])
 def createProject():
     form = ProjectCreate()
     cur = db.connection.cursor()
     cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
     form.executive.choices = [entry for entry in cur.fetchall()]
-   
+
     query = f"""
     SELECT  DISTINCT Program_ID,Name
     FROM program
     """
     cur.execute(query)
-    
+
     form.associated_program.choices = [entry for entry in cur.fetchall()]
-    cur.execute("SELECT Organization_ID, CONCAT(Organization_ID, ', ', Name) FROM Organization")
+    cur.execute(
+        "SELECT Organization_ID, CONCAT(Organization_ID, ', ', Name) FROM Organization")
     form.organization.choices = [entry for entry in cur.fetchall()]
 
     query = f"""
@@ -287,7 +292,7 @@ def createProject():
     """
     cur.execute(query)
     form.research_manager.choices = [entry for entry in cur.fetchall()]
-   
+
     projID = str(request.form.get('projID'))
     name = str(request.form.get('name'))
     summary = str(request.form.get('summary'))
@@ -299,11 +304,12 @@ def createProject():
     associated_program = str(request.form.get('associated_program'))
     research_manager = str(request.form.get('research_manager'))
 
-    print(projID,name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
-    
+    print(projID, name, summary, funds, executive, start_date,
+          end_date, organization, associated_program, research_manager)
+
     if(request.method == "POST" and form.validate_on_submit()):
-        query1 =  """SELECT MAX(Project_ID) FROM project"""
-        
+        query1 = """SELECT MAX(Project_ID) FROM project"""
+
         try:
             cur = db.connection.cursor()
             if (id == '0' or id == ''):
@@ -322,15 +328,16 @@ def createProject():
             cur.close()
             flash("Project created successfully", "success")
 
-        except Exception as e: ## OperationalError
+        except Exception as e:  # OperationalError
             flash(str(e), "danger")
 
-    ## else, response for GET request
-    return render_template("create_project.html", pageTitle = "Create Project", form = form)
+    # else, response for GET request
+    return render_template("create_project.html", pageTitle="Create Project", form=form)
 
-@app.route("/projects/<int:projectID>", methods = ["GET", "POST"])
+
+@app.route("/projects/<int:projectID>", methods=["GET", "POST"])
 def fetch_project_researchers(projectID):
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
 
     query = f"""
     SELECT XX.Researcher_ID, CONCAT(Name,' ', Surname) AS Full_Name, Gender, Recruitment_Date FROM (
@@ -343,7 +350,8 @@ def fetch_project_researchers(projectID):
     """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
-    proj_researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    proj_researchers = [dict(zip(column_names, entry))
+                        for entry in cur.fetchall()]
 
     query = f"""
     SELECT *
@@ -375,27 +383,29 @@ def fetch_project_researchers(projectID):
             flash(str(e), "danger")
     cur.close()
 
-    return render_template("fetch_project.html", proj_researchers=proj_researchers, works=works, 
-    pageTitle = f"Researchers working on Project with ID {projectID}", ID = f"{projectID}", work_form=work_form)
+    return render_template("fetch_project.html", proj_researchers=proj_researchers, works=works,
+                           pageTitle=f"Researchers working on Project with ID {projectID}", ID=f"{projectID}", work_form=work_form)
 
-@app.route("/executive", methods = ["GET", "POST"])
+
+@app.route("/executive", methods=["GET", "POST"])
 def executive_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     form = ExecUpdate()
 
     query = """
     SELECT *
     FROM Executive
     """
-        
+
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
     executive = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("executive.html", executive=executive, pageTitle = "Executives Page", form = form)
+    return render_template("executive.html", executive=executive, pageTitle="Executives Page", form=form)
 
-@app.route("/executive/update/<int:execID>", methods = ["POST"])
+
+@app.route("/executive/update/<int:execID>", methods=["POST"])
 def updateExec(execID):
     print("awoogra!!!!")
     form = ExecUpdate()
@@ -420,7 +430,8 @@ def updateExec(execID):
                 flash(error, "danger")
     return redirect('/executive')
 
-@app.route("/executive/create", methods = ["GET","POST"])
+
+@app.route("/executive/create", methods=["GET", "POST"])
 def insertExec():
     form = ExecUpdate()
     id = request.form.get('execID')
@@ -428,8 +439,8 @@ def insertExec():
     surname = str(request.form.get('surname'))
     exec_id = 0
     if(request.method == "POST" and form.validate_on_submit()):
-        query1 =  """SELECT MAX(Executive_ID) FROM executive"""
-        
+        query1 = """SELECT MAX(Executive_ID) FROM executive"""
+
         try:
             cur = db.connection.cursor()
             if (id == '0' or id == ''):
@@ -447,14 +458,14 @@ def insertExec():
             cur.close()
             flash("Executive created successfully", "success")
 
-        except Exception as e: ## OperationalError
+        except Exception as e:  # OperationalError
             flash(str(e), "danger")
 
-    ## else, response for GET request
-    return render_template("create_executive.html", pageTitle = "Create Executive", form = form)
+    # else, response for GET request
+    return render_template("create_executive.html", pageTitle="Create Executive", form=form)
 
 
-@app.route('/executive/delete/<int:execID>', methods = ["POST"])
+@app.route('/executive/delete/<int:execID>', methods=["POST"])
 def deleteexec(execID):
     conn = db.connection
     cur = conn.cursor()
@@ -471,7 +482,8 @@ def deleteexec(execID):
 
     return redirect('/executive')
 
-@app.route("/projects-per-researcher", methods = ["GET", "POST"])
+
+@app.route("/projects-per-researcher", methods=["GET", "POST"])
 def projects_per_researcher_view():
     create_form = WorksOnAdd()
     delete_form = WorksOnDelete()
@@ -479,7 +491,7 @@ def projects_per_researcher_view():
     create_eval_form = EvalAdd()
     delete_eval_form = EvalDelete()
 
-    cur = db.connection.cursor() 
+    cur = db.connection.cursor()
     query = """
     SELECT DISTINCT P.Researcher_ID, P.Full_Name, P.Org_ID, P.Project_ID, P.Project_Name, E.Researcher_ID AS Evaluator_ID
     FROM projects_per_researcher P INNER JOIN Evaluation E
@@ -494,8 +506,7 @@ def projects_per_researcher_view():
     column_names = [i[0] for i in cur.description]
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
 
-   
-    # Set researcher fields 
+    # Set researcher fields
     query = """
     SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name, ' Org. ID: ', Org_ID)
     FROM projects_per_researcher
@@ -505,7 +516,7 @@ def projects_per_researcher_view():
     cur.execute(query)
     delete_form.researcher_d.choices = [entry for entry in cur.fetchall()]
 
-    # Set project fields 
+    # Set project fields
     query = """
     SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name, '- Org. ID: ', Org_ID)
     FROM projects_per_researcher
@@ -515,7 +526,7 @@ def projects_per_researcher_view():
     create_form.project.choices = [entry for entry in cur.fetchall()]
     cur.execute(query)
     delete_form.project_d.choices = [entry for entry in cur.fetchall()]
-    
+
     # Select researcher - evaluator
     query = """
     SELECT DISTINCT Researcher_ID, CONCAT(Researcher_ID, ', ', Full_Name, '- Org. ID: ', Org_ID)
@@ -543,9 +554,7 @@ def projects_per_researcher_view():
     cur.execute(query)
     delete_eval_form.project_d.choices = [entry for entry in cur.fetchall()]
 
-    
-
-    #works on insert
+    # works on insert
     if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('checkbox') == 'Yes'):
         try:
             researcher = request.form.get('researcher')
@@ -559,13 +568,13 @@ def projects_per_researcher_view():
             cur.execute(query)
             db.connection.commit()
             flash("Researcher added project successfully", "success")
-            return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
-     create_form = create_form, delete_form = delete_form)
+            return render_template("projects_per_researcher.html", results=results, pageTitle="Projects per Researcher Page",
+                                   create_form=create_form, delete_form=delete_form)
         except Exception as e:
             print("not a creation")
             if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
-    #works on delete
+    # works on delete
     if(request.method == "POST" and delete_form.validate_on_submit() and request.form.get('checkbox_d') == 'Yes'):
         try:
             researcher = request.form.get('researcher_d')
@@ -578,14 +587,14 @@ def projects_per_researcher_view():
             cur.execute(query)
             db.connection.commit()
             flash("Researcher removed from project successfully", "success")
-            return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
-     create_form = create_form, delete_form = delete_form)
+            return render_template("projects_per_researcher.html", results=results, pageTitle="Projects per Researcher Page",
+                                   create_form=create_form, delete_form=delete_form)
         except Exception as e:
             print("not a deletion")
             if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
-    #evals insert           
+    # evals insert
     if(request.method == "POST" and create_eval_form.validate_on_submit() and request.form.get('checkbox_ea') == 'Yes'):
         try:
             researcher = request.form.get('researcher')
@@ -600,14 +609,14 @@ def projects_per_researcher_view():
             cur.execute(query)
             db.connection.commit()
             flash("Researcher-Evaluator added to project successfully", "success")
-            return render_template("projects_per_researcher.html", results=results, pageTitle = "Projects per Researcher Page",
-     create_eval_form = create_eval_form, delete_eval_form = delete_eval_form)
+            return render_template("projects_per_researcher.html", results=results, pageTitle="Projects per Researcher Page",
+                                   create_eval_form=create_eval_form, delete_eval_form=delete_eval_form)
         except Exception as e:
             print("not a creation")
             if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
-    #evals delete
+    # evals delete
     if(request.method == "POST" and delete_eval_form.validate_on_submit() and request.form.get('checkbox_ed') == 'Yes'):
         try:
             researcher = request.form.get('researcher_d')
@@ -620,25 +629,21 @@ def projects_per_researcher_view():
             cur.execute(query)
             db.connection.commit()
             flash("Evaluator removed from project successfully", "success")
-            return render_template("projects_per_researcher.html", results=results,  pageTitle = "Projects per Researcher Page",
-     create_eval_form = create_eval_form, delete_eval_form = delete_eval_form)
+            return render_template("projects_per_researcher.html", results=results,  pageTitle="Projects per Researcher Page",
+                                   create_eval_form=create_eval_form, delete_eval_form=delete_eval_form)
         except Exception as e:
             print("not a deletion")
             if '1054' not in str(e) and "'create_form' is undefined" not in str(e):
                 flash(str(e), "danger")
 
-
-
     cur.close()
-    return render_template("projects_per_researcher.html", results=results,   pageTitle = "Projects per Researcher Page",
-     create_form = create_form, delete_form = delete_form, create_eval_form = create_eval_form, delete_eval_form = delete_eval_form)
+    return render_template("projects_per_researcher.html", results=results,   pageTitle="Projects per Researcher Page",
+                           create_form=create_form, delete_form=delete_form, create_eval_form=create_eval_form, delete_eval_form=delete_eval_form)
 
 
-
-
-@app.route("/projects-per-field", methods = ["GET", "POST"])
+@app.route("/projects-per-field", methods=["GET", "POST"])
 def projects_per_field_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     add_form = AddProjectField()
     remove_form = RemoveProjectField()
     create_form = newField()
@@ -653,7 +658,7 @@ def projects_per_field_view():
     column_names = [i[0] for i in cur.description]
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
 
-    # Set project fields 
+    # Set project fields
     query = """
     SELECT DISTINCT Project_ID, CONCAT(Project_ID, ', ', Project_Name)
     FROM projects_per_field
@@ -678,7 +683,7 @@ def projects_per_field_view():
     delete_form.field.choices = [entry for entry in cur.fetchall()]
     cur.execute(query)
     edit_form.field.choices = [entry for entry in cur.fetchall()]
-    
+
     if(request.method == "POST" and add_form.validate_on_submit() and request.form.get('checkbox') == 'Yes'):
         try:
             field = request.form.get('field')
@@ -693,7 +698,7 @@ def projects_per_field_view():
             flash("Field added to project successfully", "success")
         except Exception as e:
             flash(str(e), "danger")
-    
+
     if(request.method == "POST" and remove_form.validate_on_submit() and request.form.get('checkbox_d') == 'Yes'):
         try:
             field = request.form.get('field_d')
@@ -708,7 +713,7 @@ def projects_per_field_view():
             flash("Field removed from project successfully", "success")
         except Exception as e:
             flash(str(e), "danger")
-    
+
     if(request.method == "POST" and create_form.validate_on_submit() and request.form.get('checkbox_cf') == 'Yes'):
         try:
             cur.execute("SELECT 1+MAX(Field_ID) FROM Research_Field")
@@ -757,13 +762,14 @@ def projects_per_field_view():
 
     cur.close()
 
-    return render_template("projects_per_field.html", results=results, pageTitle = "Projects per Research Field",
-    add_form = add_form, remove_form = remove_form, create_form = create_form, delete_form=delete_form, edit_form = edit_form)
+    return render_template("projects_per_field.html", results=results, pageTitle="Projects per Research Field",
+                           add_form=add_form, remove_form=remove_form, create_form=create_form, delete_form=delete_form, edit_form=edit_form)
 
-@app.route("/specific-research-field", methods = ['GET', 'POST'])
+
+@app.route("/specific-research-field", methods=['GET', 'POST'])
 def specific_research_field():
     form = SelectResearchField()
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     query = """
     SELECT DISTINCT Field_ID, Field_Name
     FROM projects_per_field
@@ -778,7 +784,7 @@ def specific_research_field():
 
     if(request.method == "POST"):
         ResearchField = str(request.form.get('ResearchField'))
-        cur = db.connection.cursor()   
+        cur = db.connection.cursor()
 
         query = f"""
         SELECT Project.Project_ID, Name
@@ -810,12 +816,12 @@ def specific_research_field():
 
         cur.close()
 
-    return render_template("specific_field.html", results=results, results2 = results2, form = form, pageTitle = "Projects for chosen Research Field")
+    return render_template("specific_field.html", results=results, results2=results2, form=form, pageTitle="Projects for chosen Research Field")
 
 
 @app.route("/organizations-consecutive-year-projects")
 def consecutive_year_orgs_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
 
     query = """
             select Organization.Organization_ID, Organization.Name, Organization.Acronym, X.Y AS Year, Projects_This_Year
@@ -844,11 +850,12 @@ def consecutive_year_orgs_view():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("consecutive_years.html", results=results, pageTitle = "Organizations with same number of projects in two concecutive years (more than 10 soon)")
+    return render_template("consecutive_years.html", results=results, pageTitle="Organizations with same number of projects in two concecutive years (more than 10 soon)")
+
 
 @app.route("/top-three-field-pairs")
 def top_field_pairs_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
 
     query = """
             SELECT Field_1, R1.Name AS Name_1, Field_2, R2.Name AS Name_2, pair_count
@@ -874,7 +881,8 @@ def top_field_pairs_view():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("top_three_field_pairs.html", results=results, pageTitle = "Top three field pairs")
+    return render_template("top_three_field_pairs.html", results=results, pageTitle="Top three field pairs")
+
 
 @app.route("/most-prolific-researchers")
 def prolific_researchers():
@@ -895,7 +903,7 @@ def prolific_researchers():
             WHERE DATEDIFF(NOW(), Birth_Date) < 365*40
             ORDER BY project_cnt DESC;
             """
-    cur.execute(query)   
+    cur.execute(query)
 
     query = """
             select DISTINCT T2.R_ID, T2.Full_Name, T2.Age, T2.project_cnt FROM
@@ -908,7 +916,8 @@ def prolific_researchers():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("prolific_researchers.html", results=results, pageTitle = "Prolific Researchers")
+    return render_template("prolific_researchers.html", results=results, pageTitle="Prolific Researchers")
+
 
 @app.route("/executive-money-bags")
 def top_executives_view():
@@ -937,7 +946,8 @@ def top_executives_view():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("top_executives.html", results=results, pageTitle = "Executives giving most money to a company")
+    return render_template("top_executives.html", results=results, pageTitle="Executives giving most money to a company")
+
 
 @app.route("/researchers-on-projects-without-work")
 def many_no_work_projects_view():
@@ -958,11 +968,12 @@ def many_no_work_projects_view():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("no_work_projects.html", results=results, pageTitle = "Researchers on many projects with no work")
+    return render_template("no_work_projects.html", results=results, pageTitle="Researchers on many projects with no work")
+
 
 @app.route("/organizations")
 def orgs_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     form = Org()
     query = """
     SELECT *
@@ -970,15 +981,16 @@ def orgs_view():
     """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
-    organizations = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    organizations = [dict(zip(column_names, entry))
+                     for entry in cur.fetchall()]
     cur.close()
-   
 
-    return render_template("organizations.html", organizations=organizations, pageTitle = "organizations Page", form=form)
+    return render_template("organizations.html", organizations=organizations, pageTitle="organizations Page", form=form)
 
-@app.route("/organizations/delete/<int:orgID>", methods = ["POST"])
+
+@app.route("/organizations/delete/<int:orgID>", methods=["POST"])
 def delete_orgs(orgID):
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     query = f"""
         DELETE FROM organization WHERE Organization_ID =  {orgID}
         """
@@ -992,9 +1004,10 @@ def delete_orgs(orgID):
 
     return redirect('/organizations')
 
-@app.route("/organizations/update/<int:orgID>", methods = ["POST"])
+
+@app.route("/organizations/update/<int:orgID>", methods=["POST"])
 def update_orgs(orgID):
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     form = Org()
     name = str(request.form.get('name'))
     acr = str(request.form.get('acr'))
@@ -1019,11 +1032,11 @@ def update_orgs(orgID):
             for error in category:
                 flash(error, "danger")
     return redirect('/organizations')
-   
 
-@app.route("/researchers", methods = ["GET", "POST"])
+
+@app.route("/researchers", methods=["GET", "POST"])
 def researchers_view():
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     form = updateRes()
     query = """
     SELECT *
@@ -1034,19 +1047,19 @@ def researchers_view():
     researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-   
-    cur = db.connection.cursor()   
+    cur = db.connection.cursor()
     cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
     form.gender.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form.orgID.choices = [entry for entry in cur.fetchall()]
     cur.close()
-    return render_template("researchers.html", researchers=researchers, pageTitle = "Researchers Page", form=form)
+    return render_template("researchers.html", researchers=researchers, pageTitle="Researchers Page", form=form)
 
-@app.route("/researchers/update/<int:Researcher_ID>", methods = ["POST"])
+
+@app.route("/researchers/update/<int:Researcher_ID>", methods=["POST"])
 def updateResearcher(Researcher_ID):
-    
-    cur = db.connection.cursor() 
+
+    cur = db.connection.cursor()
     form = updateRes()
     cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
     form.gender.choices = [entry for entry in cur.fetchall()]
@@ -1056,29 +1069,30 @@ def updateResearcher(Researcher_ID):
     name = str(request.form.get('name'))
     surname = str(request.form.get('surname'))
     gender = str(request.form.get('gender'))
-    birth_date  = str(request.form.get('birth_date'))
+    birth_date = str(request.form.get('birth_date'))
     r_date = str(request.form.get('r_date'))
     orgID = str(request.form.get('orgID'))
 
-    if (request.method == "POST" and form.validate_on_submit() ):
+    if (request.method == "POST" and form.validate_on_submit()):
         try:
             query = f"""
             UPDATE Researcher SET Name = '{name}', Surname = '{surname}', Gender = '{gender}', Birth_Date = '{birth_date}', Recruitment_Date = '{r_date}', Organization_ID = {orgID}
             WHERE Researcher_ID = {Researcher_ID}
             """
-            
+
             cur.execute(query)
             db.connection.commit()
             cur.close()
             flash("Researcher succesfully updated", "success")
         except Exception as e:
-            flash(str(e), "danger") 
+            flash(str(e), "danger")
 
     return redirect('/researchers')
 
-@app.route("/researchers/create", methods = ["GET","POST"])
+
+@app.route("/researchers/create", methods=["GET", "POST"])
 def createResearcher():
-    cur = db.connection.cursor() 
+    cur = db.connection.cursor()
     form = createRes()
 
     cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
@@ -1090,14 +1104,14 @@ def createResearcher():
     name = str(request.form.get('name'))
     surname = str(request.form.get('surname'))
     gender = str(request.form.get('gender'))
-    birth_date  = str(request.form.get('birth_date'))
+    birth_date = str(request.form.get('birth_date'))
     r_date = str(request.form.get('r_date'))
     orgID = str(request.form.get('orgID'))
     res_id = 0
 
     if(request.method == "POST" and form.validate_on_submit()):
-        query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
-        
+        query1 = """SELECT MAX(Researcher_ID) FROM Researcher"""
+
         try:
             cur = db.connection.cursor()
             if (id == '0' or id == ''):
@@ -1115,16 +1129,17 @@ def createResearcher():
             cur.close()
             flash("Researcher created successfully", "success")
 
-        except Exception as e: ## OperationalError
+        except Exception as e:  # OperationalError
             flash(str(e), "danger")
 
-    ## else, response for GET request
-    return render_template("create_researcher.html", pageTitle = "Create Researcher", form = form)  
+    # else, response for GET request
+    return render_template("create_researcher.html", pageTitle="Create Researcher", form=form)
 
-@app.route("/researchers/delete/<int:Researcher_ID>", methods = ["POST"])
+
+@app.route("/researchers/delete/<int:Researcher_ID>", methods=["POST"])
 def deleteResearcher(Researcher_ID):
-    cur = db.connection.cursor() 
-    
+    cur = db.connection.cursor()
+
     query = f"""
     DELETE FROM Researcher WHERE Researcher_ID = {Researcher_ID}
     """
@@ -1136,4 +1151,4 @@ def deleteResearcher(Researcher_ID):
     except Exception as e:
         flash(str(e), "danger")
 
-    return redirect('/researchers') 
+    return redirect('/researchers')
