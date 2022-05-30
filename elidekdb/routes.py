@@ -19,19 +19,41 @@ def programs_view():
     column_names = [i[0] for i in cur.description]
     programs = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     #programs = cur.fetchall()
+    update_form = ProgramUpdate()
     cur.close()
     #print(programs[1])
 
-    return render_template("programs.html", programs=programs, pageTitle = "Programs Page")
+    return render_template("programs.html", programs=programs,
+     pageTitle = "Programs Page", update_form = update_form)
 
+@app.route("/programs/update/<int:program_ID>", methods = ["POST"])
+def updateProgram(program_ID):
+    update_form = ProgramUpdate()
+    cur = db.connection.cursor() 
+    
+    if (update_form.validate_on_submit()):
+        try:
+            name = str(request.form.get('name'))
+            sector = str(request.form.get('sector'))
+            query = f"""
+            UPDATE program SET Name = '{name}', ELIDEK_Sector = '{sector}'
+            WHERE Program_ID = {program_ID}
+            """
+            cur.execute(query)
+            db.connection.commit()
+            flash("Program succesfully updated", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+    
+    return redirect('/programs')
 
-@app.route("/programs/delete/<Name>", methods = ["POST"])
-def deleteProgram(Name):
+@app.route("/programs/delete/<int:program_ID>", methods = ["POST"])
+def deleteProgram(program_ID):
     conn = db.connection
     cur = conn.cursor()
     form2 = ProgramUpdate()
     query = f"""
-    DELETE FROM program WHERE Name =  'Name'
+    DELETE FROM program WHERE Program_ID =  {program_ID}
     """
     try:
         cur.execute(query)
@@ -47,22 +69,23 @@ def deleteProgram(Name):
 @app.route("/programs/create", methods = ["GET", "POST"])
 def newProgram():
     cur = db.connection.cursor()   
-    form = ProgramUpdate()  
+    form = ProgramCreate()  
     query = """
     SELECT DISTINCT ELIDEK_Sector, ELIDEK_Sector
     FROM program
     """
     cur.execute(query)
     form.sector.choices = [entry for entry in cur.fetchall()]
-    cur.close()
     if(request.method == "POST"):
         name = str(request.form.get('name'))
         sector = str(request.form.get('sector'))
         sector2 = str(request.form.get('sector2'))
+        cur.execute("SELECT MAX(Program_ID) FROM PROGRAM")
+        id = str(cur.fetchall()[0][0]+1)
         if sector2 != '':
             sector = sector2
         query = f"""
-        INSERT INTO program (Name, ELIDEK_Sector) VALUES ('{name}', '{sector}')
+        INSERT INTO program (Program_ID, Name, ELIDEK_Sector) VALUES ({id}, '{name}', '{sector}')
         """
         try:
             cur = db.connection.cursor() 
