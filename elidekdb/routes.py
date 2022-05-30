@@ -200,6 +200,11 @@ def deleteProject(projID):
 
     return redirect('/projects')
 
+@app.route("/projects/create", methods = ["POST"])
+def createProject():
+
+    return redirect('/projects')
+
 
 @app.route("/projects/<int:projectID>")
 def fetch_project_researchers(projectID):
@@ -712,7 +717,7 @@ def top_field_pairs_view():
 def prolific_researchers():
 
     cur = db.connection.cursor()
-
+    cur.execute("DROP VIEW IF EXISTS project_count")
     query = """
             CREATE VIEW IF NOT EXISTS project_count AS
             SELECT DISTINCT Researcher.Researcher_ID AS R_ID, CONCAT(Researcher.Name, ' ', Researcher.Surname) AS Full_Name, FLOOR(DATEDIFF(NOW(), Birth_Date)/365) AS Age,
@@ -746,6 +751,7 @@ def prolific_researchers():
 def top_executives_view():
 
     cur = db.connection.cursor()
+    cur.execute("DROP VIEW IF EXISTS company_funders")
     query = """
         CREATE VIEW IF NOT EXISTS company_funders AS
         SELECT DISTINCT Executive.Executive_ID, CONCAT(Executive.Name, ' ', Executive.Surname) AS Full_Name, Organization.Name AS comp_name, SUM(Project.Project_Funds) AS Total_Funds FROM 

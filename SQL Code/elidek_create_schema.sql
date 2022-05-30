@@ -11,9 +11,10 @@ ENGINE = InnoDB;
 -- Table mydb.`Program`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Program (
+  Program_ID INT UNSIGNED NOT NULL,
   Name VARCHAR(45) NOT NULL,
   ELIDEK_Sector VARCHAR(45) NOT NULL,
-  PRIMARY KEY (Name))
+  PRIMARY KEY (Program_ID))
 ENGINE = InnoDB;
 
 
@@ -31,42 +32,6 @@ CREATE TABLE IF NOT EXISTS  Organization (
   Org_type ENUM('University', 'Company', 'Research Center') NOT NULL,
   CHECK(Postal_Code > 9999 and Postal_Code < 100000),
   PRIMARY KEY (Organization_ID))
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table mydb.`Project`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  Project (
-  Project_ID INT UNSIGNED NOT NULL,
-  Name VARCHAR(45) NOT NULL,
-  Summary VARCHAR(1500) NOT NULL,
-  Project_Funds VARCHAR(45) NOT NULL CHECK (Project_Funds > 100000 AND Project_Funds < 1000000),
-  Start_Date DATE NOT NULL,
-  End_Date DATE NOT NULL,
-  CHECK(DATEDIFF(End_Date,Start_Date) > 365 AND DATEDIFF(End_Date,Start_Date) < 1460 AND DATEDIFF(Start_Date, NOW()) < 0),
-  Executive_ID INT UNSIGNED NOT NULL,
-  Program_Name VARCHAR(45) NOT NULL,
-  Organization_ID INT UNSIGNED NOT NULL,
-  PRIMARY KEY (Project_ID),
-  INDEX fk_Project_Executive_idx (Executive_ID ASC) ,
-  INDEX fk_Project_Program_idx (Program_Name ASC) ,
-  INDEX fk_Project_Organization_idx (Organization_ID ASC) ,
-  UNIQUE INDEX Project_ID_UNIQUE (Project_ID ASC) ,
-  CONSTRAINT fk_Project_Organization
-    FOREIGN KEY (Organization_ID)
-    REFERENCES Organization (Organization_ID)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_Manages
-    FOREIGN KEY (Executive_ID)
-    REFERENCES Executive (Executive_ID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_Project_Program
-    FOREIGN KEY (Program_Name)
-    REFERENCES Program (Name)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -91,6 +56,47 @@ CREATE TABLE IF NOT EXISTS  Researcher (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table mydb.`Project`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS  Project (
+  Project_ID INT UNSIGNED NOT NULL,
+  Name VARCHAR(45) NOT NULL,
+  Summary VARCHAR(1500) NOT NULL,
+  Project_Funds VARCHAR(45) NOT NULL CHECK (Project_Funds > 100000 AND Project_Funds < 1000000),
+  Start_Date DATE NOT NULL,
+  End_Date DATE NOT NULL,
+  CHECK(DATEDIFF(End_Date,Start_Date) > 364 AND DATEDIFF(End_Date,Start_Date) < 1461 AND DATEDIFF(Start_Date, NOW()) < 0),
+  Executive_ID INT UNSIGNED NOT NULL,
+  Program_ID INT UNSIGNED NOT NULL,
+  Organization_ID INT UNSIGNED NOT NULL,
+  Research_Manager_ID INT UNSIGNED NOT NULL,
+  PRIMARY KEY (Project_ID),
+  INDEX fk_Project_Executive_idx (Executive_ID ASC) ,
+  INDEX fk_Project_Program_idx (Program_ID ASC) ,
+  INDEX fk_Project_Organization_idx (Organization_ID ASC) ,
+  UNIQUE INDEX Project_ID_UNIQUE (Project_ID ASC) ,
+  CONSTRAINT fk_Project_Organization
+    FOREIGN KEY (Organization_ID)
+    REFERENCES Organization (Organization_ID)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_Manages
+    FOREIGN KEY (Executive_ID)
+    REFERENCES Executive (Executive_ID)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_Research_Manager
+    FOREIGN KEY (Research_Manager_ID)
+    REFERENCES Researcher (Researcher_ID)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_Project_Program
+    FOREIGN KEY (Program_ID)
+    REFERENCES Program (Program_ID)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table mydb.`University`
@@ -220,7 +226,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS Org_Phone (
   Organization_ID INT UNSIGNED NOT NULL,
   Phone_Number CHAR(10) NOT NULL,
--- CONSTRAINT chk_phone CHECK (Phone_Number like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
+  -- CONSTRAINT chk_phone CHECK REGEXP('[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
   PRIMARY KEY (Organization_ID, Phone_Number),
   CONSTRAINT fk_Organization_ID
     FOREIGN KEY (Organization_ID)
@@ -259,36 +265,48 @@ BEGIN
     SIGNAL SQLSTATE '45000'
            SET MESSAGE_TEXT = 'check constraint on Evaluation failed - A researcher cannot evaluate and work on the same project';
     END IF;
+    
+    IF (DATEDIFF(new.Evaluation_Date, (SELECT End_Date FROM Project WHERE Project_ID = new.Project_ID AND Research_Manager_ID = new.Researcher_ID)) > 0
+		OR DATEDIFF(new.Evaluation_Date, (SELECT Start_Date FROM Project WHERE Project_ID = new.Project_ID AND Research_Manager_ID = new.Researcher_ID) < 0)) THEN 
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Evaluation failed - Evaluation date must be between project start and end date';
+    END IF;
 END$   
 DELIMITER ; 
 
 DELIMITER ;
 
--- -----------------------------------------------------
--- View 1 Projects per Researcher
--- -----------------------------------------------------
+DELIMITER $
+CREATE TRIGGER chk_Res_Work_On_One_Org BEFORE INSERT ON Works_On 
+FOR EACH ROW
+BEGIN
+    IF ((SELECT Organization_ID FROM Researcher WHERE Researcher_ID = new.Researcher_ID) <> 
+        (SELECT Organization_ID FROM Project WHERE Project_ID = new.Project_ID)) THEN 
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Works_On failed - A researcher can only work on projects from the organization they are in.';
+    END IF;
+    
+    IF (DATEDIFF(new.Start_Date, (SELECT End_Date FROM Project WHERE Project_ID = new.Project_ID)) > 0 OR 
+        DATEDIFF(new.Start_Date, (SELECT Start_Date FROM Project WHERE Project_ID = new.Project_ID)) < 0) THEN 
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Works_On failed - Start date must be between start and end date of project.';
+    END IF;
+END$   
+DELIMITER ; 
+
+DELIMITER $
+CREATE TRIGGER chk_Work_Submission_between_projDates BEFORE INSERT ON Work_To_Be_Submitted 
+FOR EACH ROW
+BEGIN
+    IF (DATEDIFF(new.Submission_Date, (SELECT End_Date FROM Project WHERE Project_ID = new.Project_ID)) > 0 OR 
+        DATEDIFF(new.Submission_Date, (SELECT Start_Date FROM Project WHERE Project_ID = new.Project_ID)) < 0) THEN 
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Work_To_Be_Submitted failed - Submission date must be between start and end date of project.';
+    END IF;
+END$   
+DELIMITER ; 
 
 
-CREATE VIEW projects_per_researcher AS
-SELECT Researcher.Researcher_ID,
-	     CONCAT(Researcher.Name, ' ', Researcher.Surname) AS `Full_Name`,
-       Project.Project_ID,
-       Project.Name AS `Project_Name`
-FROM Researcher INNER JOIN Works_On ON Researcher.Researcher_ID=Works_On.Researcher_ID
-INNER JOIN Project on Works_On.Project_ID=Project.Project_ID
-ORDER BY Researcher.Researcher_ID;
 
--- -----------------------------------------------------
--- View 2 Projects per Field
--- -----------------------------------------------------
-
-CREATE VIEW projects_per_field AS
-SELECT Project.Project_ID,
-       Project.Name AS `Project_Name`,
-       Research_Field.Field_ID,
-       Research_Field.Name as `Field_Name`
-FROM Project INNER JOIN Refers_To ON Project.Project_ID=Refers_To.Project_ID
-INNER JOIN Research_Field on Refers_To.Field_ID=Research_Field.Field_ID
-ORDER BY Field_ID;
 
 

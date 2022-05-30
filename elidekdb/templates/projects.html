@@ -7,6 +7,13 @@
     <div class="row" id="row">
         <h3>ELIDEK Projects</h3>
         <div class="col-md-12" align="center">
+            <a href='/projects/create'>
+                <button class="btn btn-success float-end">
+                    Add project
+                </button>
+            </a>
+        </div>
+        <div class="col-md-12" align="center">
             <form class="form-horizontal" name="project-form" method="POST">
                 <!-- hidden_tag returns the form's security metadata -->
                 {{ form.hidden_tag() }}

@@ -13,7 +13,6 @@ class ProgramUpdate(FlaskForm):
     submit = SubmitField("Submit", validators = [DataRequired(message = "Name is a required field.")])
 
 
-
 class ProjectFilterForm(FlaskForm):
     min_Start_Date = DateField(label = "Start Date From:", validators = [Optional()])
     max_Start_Date = DateField(label = "Start Date To:", validators = [Optional()])
@@ -24,6 +23,8 @@ class ProjectFilterForm(FlaskForm):
     executive = StringField(label = "Executive Name", validators = [Optional()])
     submit = SubmitField("Filter")
 
+class ProjectCreate(FlaskForm):
+    name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
 
 class ExecUpdate(FlaskForm):
     execID = IntegerField(label = "Executive ID", validators = [Optional()] )
