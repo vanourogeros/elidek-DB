@@ -154,9 +154,9 @@
         document.getElementById("Name").value = row.getAttribute("data-name");
         document.getElementById("Surname").value = row.getAttribute("data-surname");
         document.getElementById("Gender").value = row.getAttribute("data-gen");
-        document.getElementById("Start Date").value = row.getAttribute("data-bdate");
+        document.getElementById("Birth Date").value = row.getAttribute("data-bdate");
         document.getElementById("Recruitment Date").value = row.getAttribute("data-rdate");
-        document.getElementById("Org ID").value = row.getAttribute("data-org");
+        document.getElementById("Organization ID").value = row.getAttribute("data-org");
         document.getElementById("modal-form").action = "/researchers/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
     }
