@@ -6,13 +6,7 @@
     
     <div class="row" id="row">
         <h3>ELIDEK Projects</h3>
-        <div class="col-md-12" align="center">
-            <a href='/projects/create'>
-                <button class="btn btn-success float-end">
-                    Add project
-                </button>
-            </a>
-        </div>
+       
         <div class="col-md-12" align="center">
             <form class="form-horizontal" name="project-form" method="POST">
                 <!-- hidden_tag returns the form's security metadata -->
@@ -73,10 +67,17 @@
                     </ul>
                     {% endif %}
 
-
+             
                 </div>
                 {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
             </form>
+            <div class="col-md-12" align="center">
+                <a href='/projects/create'>
+                    <button class="btn btn-success float-end">
+                        Add project
+                    </button>
+                </a>
+            </div>
     </div>
     </div>
 </div>
@@ -107,6 +108,10 @@
                         {{ form2.end_date(id = "End Date", required = False) }} </p>
                         <p>Organization:
                         {{ form2.organization(id = "Organization", required = False) }} </p>
+                        <p>Associated Program:
+                        {{ form2.associated_program(id = "associated_program", required = False) }} </p>
+                        <p>Research Manager:
+                        {{ form2.research_manager(id = "research_manager", required = False) }} </p>
                     </div>
 
                     <div>
@@ -159,6 +164,20 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
+                        {% if form2.associated_program.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.associated_program.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form2.research_manager.errors %}
+                        <ul class = "errors">
+                            {% for error in form2.research_manager.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
                     </div>
                 </form>
             </div>
@@ -188,6 +207,8 @@
                                 <th>End Date</th>
                                 <th>Executive Name</th>
                                 <th>Organization ID</th>
+                                <th>Program</th>
+                                <th>Research Manager</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -202,6 +223,8 @@
                                 <td> {{ project.End_Date }} </td>
                                 <td> {{ project.E_Name }} </td>
                                 <td> {{ project.Organization_ID }} </td>
+                                <td> {{ project.P_Program }} </td>
+                                <td> {{ project.P_remanager }} </td>
                                 <td>
                                     <a type="button" onclick="setModalFields(this)"
                                     data-toggle="modal" data-id="{{ project.Project_ID }}"
@@ -209,6 +232,8 @@
                                     data-funds = "{{project.Project_Funds}}" data-start-date = "{{project.Start_Date}}"
                                     data-end-date = "{{project.End_Date}}" data-executive = "{{project.E_Name}}"
                                     data-organization = "{{project.Organization_ID}}"
+                                    data-associated-program= "{{project.P_Program}}"
+                                    data-research-manager = "{{project.P_remanager}}"
                                     data-bs-toggle = "modal"
                                     data-bs-target="#editModal">
                                         <i class="fa fa-edit"></i>
@@ -262,6 +287,8 @@
         document.getElementById("Start Date").value = row.getAttribute("data-start-date");
         document.getElementById("End Date").value = row.getAttribute("data-end-date");
         document.getElementById("Organization").value = row.getAttribute("data-organization");
+        document.getElementById("Associated Program").value = row.getAttribute("data-associated-program");
+        document.getElementById("Research Manager").value = row.getAttribute("data-research-manager");
         document.getElementById("modal-form").action = "/projects/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});

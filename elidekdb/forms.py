@@ -28,7 +28,17 @@ class ProjectFilterForm(FlaskForm):
     submit = SubmitField("Filter")
 
 class ProjectCreate(FlaskForm):
+    projID = IntegerField(label = "Project ID")
     name = StringField(label = "Project Name", validators = [DataRequired(message = "Name is a required field.")])
+    summary = TextAreaField(label = "Project Summary", validators = [DataRequired(message = "Name is a required field.")])
+    funds = IntegerField(label = "Project Funds", validators = [NumberRange(min=100000, max=1000000)])
+    executive = SelectField(u'Executive', validate_choice=False)
+    start_date = DateField(label = "Start Date")
+    end_date = DateField(label = "End Date")
+    organization = SelectField(u'Select Organization:', validate_choice=False)
+    associated_program = SelectField(u'Select Associated Program:', validate_choice=False)
+    research_manager = SelectField(u'Select Research of choice for Research Manager position:', validate_choice=False)
+    submit = SubmitField("Create")
 
 class AddDeleteWork(FlaskForm):
     title = StringField(label = "Executive Name", validators = [DataRequired(message = "Title is a required field.")])
@@ -56,6 +66,8 @@ class ProjUpdate(FlaskForm):
     start_date = DateField(label = "Start Date")
     end_date = DateField(label = "End Date")
     organization = SelectField(u'Org ID', validate_choice=False)
+    associated_program = SelectField(u'associated_program', validate_choice=False)
+    research_manager = SelectField(u'research_manager', validate_choice=False)
     submit = SubmitField("Update")
 
 class WorksOnAdd(FlaskForm):

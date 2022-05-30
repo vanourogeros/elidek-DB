@@ -112,7 +112,7 @@ def projects_view():
 
 
     query = """
-    SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID
+    SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID, P.Program_ID AS P_Program, P.Research_Manager_ID AS P_remanager 
     FROM Project P INNER JOIN Executive E 
     ON P.Executive_ID = E.Executive_ID
     ORDER BY Project_ID
@@ -175,6 +175,21 @@ def updateProject(projID):
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form2.organization.choices = [entry for entry in cur.fetchall()]
 
+    query = f"""
+    SELECT  DISTINCT Program_ID,Name
+    FROM program
+    """
+    cur.execute(query)
+    form2.associated_program.choices = [entry for entry in cur.fetchall()]
+    
+    query = f"""
+    SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Name, ' ', Surname, ', org: ', Organization_ID)  
+    FROM Researcher
+    ORDER BY Organization_ID, Researcher_ID
+    """
+    cur.execute(query)
+    form2.research_manager.choices = [entry for entry in cur.fetchall()]
+
     name = str(request.form.get('name'))
     summary = str(request.form.get('summary'))
     funds = str(request.form.get('funds'))
@@ -182,14 +197,17 @@ def updateProject(projID):
     start_date = str(request.form.get('start_date'))
     end_date = str(request.form.get('end_date'))
     organization = str(request.form.get('organization'))
-    print(name,summary,funds,executive,start_date,end_date,organization)
+    associated_program = str(request.form.get('associated_program'))
+    research_manager = str(request.form.get('research_manager'))
+    print(name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
+    
     if(form2.validate_on_submit()):
         
         query = f"""
         UPDATE project SET Name = '{name}', Summary = '{summary}',
         Project_Funds = '{funds}', Start_Date = '{start_date}',
         End_Date = '{end_date}', Organization_ID = {organization},
-        Executive_ID = {executive}
+        Executive_ID = {executive}, Program_ID = {associated_program}, Research_Manager_ID = {research_manager}
         WHERE Project_ID = {str(projID)}
         """
         print(query)
@@ -224,11 +242,70 @@ def deleteProject(projID):
 
     return redirect('/projects')
 
-@app.route("/projects/create", methods = ["POST"])
+@app.route("/projects/create", methods = ["GET","POST"])
 def createProject():
+    form = ProjectCreate()
+    cur = db.connection.cursor()
+    cur.execute("SELECT Executive_ID, CONCAT(Name, ' ', Surname) FROM Executive")
+    form.executive.choices = [entry for entry in cur.fetchall()]
+   
+    query = f"""
+    SELECT  DISTINCT Program_ID,Name
+    FROM program
+    """
+    cur.execute(query)
+    
+    form.associated_program.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, CONCAT(Organization_ID, ', ', Name) FROM Organization")
+    form.organization.choices = [entry for entry in cur.fetchall()]
 
-    return redirect('/projects')
+    query = f"""
+    SELECT Researcher_ID, CONCAT(Researcher_ID, ', ', Name, ' ', Surname, ', org: ', Organization_ID)  
+    FROM Researcher
+    ORDER BY Organization_ID, Researcher_ID
+    """
+    cur.execute(query)
+    form.research_manager.choices = [entry for entry in cur.fetchall()]
+   
+    projID = str(request.form.get('projID'))
+    name = str(request.form.get('name'))
+    summary = str(request.form.get('summary'))
+    funds = str(request.form.get('funds'))
+    executive = str(request.form.get('executive'))
+    start_date = str(request.form.get('start_date'))
+    end_date = str(request.form.get('end_date'))
+    organization = str(request.form.get('organization'))
+    associated_program = str(request.form.get('associated_program'))
+    research_manager = str(request.form.get('research_manager'))
 
+    print(projID,name,summary,funds,executive,start_date,end_date,organization,associated_program,research_manager)
+    
+    if(request.method == "POST" and form.validate_on_submit()):
+        query1 =  """SELECT MAX(Project_ID) FROM project"""
+        
+        try:
+            cur = db.connection.cursor()
+            if (id == '0' or id == ''):
+
+                cur.execute(query1)
+                temp = cur.fetchall()
+                exec_id = int(temp[0][0]+1)
+            else:
+                exec_id = id
+            query2 = f"""
+            INSERT INTO project (Project_ID, Name, Summary, Project_Funds, Start_Date, End_Date, Executive_ID, Program_ID, Organization_ID,  Research_Manager_ID) 
+            VALUES ('{projID}', '{name}', '{summary}','{funds}', '{start_date}', '{end_date}','{executive}', '{associated_program}', '{organization}','{research_manager}')
+            """
+            cur.execute(query2)
+            db.connection.commit()
+            cur.close()
+            flash("Project created successfully", "success")
+
+        except Exception as e: ## OperationalError
+            flash(str(e), "danger")
+
+    ## else, response for GET request
+    return render_template("create_project.html", pageTitle = "Create Project", form = form)
 
 @app.route("/projects/<int:projectID>", methods = ["GET", "POST"])
 def fetch_project_researchers(projectID):
