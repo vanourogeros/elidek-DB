@@ -311,6 +311,32 @@ BEGIN
 END$   
 DELIMITER ; 
 
+DELIMITER $
+CREATE TRIGGER chk_res_org_update BEFORE UPDATE ON Researcher
+FOR EACH ROW
+BEGIN
+    IF (new.Organization_ID <> old.Organization_ID) THEN 
+		IF ((SELECT COUNT(*) FROM Works_On WHERE Works_On.Researcher_ID = old.Researcher_ID) > 0) THEN
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Researcher failed - Organization can only change if researcher has no projects.';
+	   END IF;
+    END IF;
+END$   
+DELIMITER ; 
+
+DELIMITER $
+CREATE TRIGGER chk_proj_org_update BEFORE UPDATE ON Project
+FOR EACH ROW
+BEGIN
+    IF (new.Organization_ID <> old.Organization_ID) THEN 
+		IF ((SELECT COUNT(*) FROM Works_On WHERE Works_On.Project_ID = old.Project_ID) > 0) THEN
+    SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on Project failed - Organization can only change if project has no researchers.';
+	   END IF;
+    END IF;
+END$   
+DELIMITER ; 
+
 -- -----------------------------------------------------
 -- View 1: Projects per Researcher
 -- -----------------------------------------------------
