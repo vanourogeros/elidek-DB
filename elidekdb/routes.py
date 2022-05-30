@@ -1040,10 +1040,10 @@ def researchers_view():
     form.gender.choices = [entry for entry in cur.fetchall()]
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form.orgID.choices = [entry for entry in cur.fetchall()]
-
+    cur.close()
     return render_template("researchers.html", researchers=researchers, pageTitle = "Researchers Page", form=form)
 
-@app.route("/researchers/update/<int:Res_ID>", methods = ["GET", "POST"])
+@app.route("/researchers/update/<int:Res_ID>", methods = ["POST"])
 def updateResearcher(Res_ID):
     
     cur = db.connection.cursor() 
@@ -1071,6 +1071,50 @@ def updateResearcher(Res_ID):
             flash("Researcher succesfully updated", "success")
         except Exception as e:
             flash(str(e), "danger")
-       
-    
-    return redirect('/programs')
+
+    return redirect('/researchers')
+
+@app.route("/researchers/create", methods = ["GET","POST"])
+def createResearcher():
+    cur = db.connection.cursor() 
+    form = createRes()
+
+    cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
+    form.gender.choices = [entry for entry in cur.fetchall()]
+    cur.execute("SELECT Organization_ID, Name FROM Organization")
+    form.orgID.choices = [entry for entry in cur.fetchall()]
+
+    id = request.form.get('resID')
+    name = str(request.form.get('name'))
+    surname = str(request.form.get('surname'))
+    gender = str(request.form.get('gender'))
+    birth_date  = str(request.form.get('birth_date'))
+    r_date = str(request.form.get('r_date'))
+    orgID = str(request.form.get('orgID'))
+    res_id = 0
+
+    if(request.method == "POST" and form.validate_on_submit()):
+        query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
+        
+        try:
+            cur = db.connection.cursor()
+            if (id == '0' or id == ''):
+
+                cur.execute(query1)
+                temp = cur.fetchall()
+                res_id = int(temp[0][0]+1)
+            else:
+                res_id = id
+            query2 = f"""
+            INSERT INTO Researcher (Researcher_ID, Name, Surname, Gender, Birth_Date, Recruitment_Date, Organization_ID) VALUES ('{res_id}', '{name}', '{surname}', '{gender}', '{birth_date}', '{r_date}', '{orgID}')
+            """
+            cur.execute(query2)
+            db.connection.commit()
+            cur.close()
+            flash("Researcher created successfully", "success")
+
+        except Exception as e: ## OperationalError
+            flash(str(e), "danger")
+
+    ## else, response for GET request
+    return render_template("create_researcher.html", pageTitle = "Create Researcher", form = form)   
