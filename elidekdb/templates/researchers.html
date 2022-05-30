@@ -157,7 +157,7 @@
         document.getElementById("Start Date").value = row.getAttribute("data-bdate");
         document.getElementById("Recruitment Date").value = row.getAttribute("data-rdate");
         document.getElementById("Org ID").value = row.getAttribute("data-org");
-        document.getElementById("modal-form").action = "/projects/update/" + document.getElementById("id").value;
+        document.getElementById("modal-form").action = "/researchers/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
     }
 

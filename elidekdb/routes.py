@@ -1043,8 +1043,8 @@ def researchers_view():
     cur.close()
     return render_template("researchers.html", researchers=researchers, pageTitle = "Researchers Page", form=form)
 
-@app.route("/researchers/update/<int:Res_ID>", methods = ["POST"])
-def updateResearcher(Res_ID):
+@app.route("/researchers/update/<int:Researcher_ID>", methods = ["POST"])
+def updateResearcher(Researcher_ID):
     
     cur = db.connection.cursor() 
     form = updateRes()
@@ -1053,24 +1053,26 @@ def updateResearcher(Res_ID):
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form.orgID.choices = [entry for entry in cur.fetchall()]
 
-    if (form.validate_on_submit() and request.method == "POST"):
+    name = str(request.form.get('name'))
+    surname = str(request.form.get('surname'))
+    gender = str(request.form.get('gender'))
+    birth_date  = str(request.form.get('birth_date'))
+    r_date = str(request.form.get('r_date'))
+    orgID = str(request.form.get('orgID'))
+
+    if (request.method == "POST" and form.validate_on_submit() ):
         try:
-            name = str(request.form.get('name'))
-            surname = str(request.form.get('surname'))
-            gender = str(request.form.get('gender'))
-            birth_date  = str(request.form.get('birth_date'))
-            r_date = str(request.form.get('r_date'))
-            orgID = str(request.form.get('orgID'))
             query = f"""
-            UPDATE Researcher SET Name = '{name}', Surname = '{surname}', Gender = '{gender}', Birth_Date = '{birth_date}', Recruitment_Date = '{r_date}', Organization_ID = '{orgID}'
-            WHERE Researcher_ID = {str(Res_ID)}
+            UPDATE Researcher SET Name = '{name}', Surname = '{surname}', Gender = '{gender}', Birth_Date = '{birth_date}', Recruitment_Date = '{r_date}', Organization_ID = {orgID}
+            WHERE Researcher_ID = {Researcher_ID}
             """
-            print(query)
+            
             cur.execute(query)
             db.connection.commit()
+            cur.close()
             flash("Researcher succesfully updated", "success")
         except Exception as e:
-            flash(str(e), "danger")
+            flash(str(e), "danger") 
 
     return redirect('/researchers')
 
