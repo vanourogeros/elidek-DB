@@ -131,16 +131,9 @@ def projects_view():
     SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID, P.Program_ID AS P_Program, P.Research_Manager_ID AS P_remanager 
     FROM Project P INNER JOIN Executive E 
     ON P.Executive_ID = E.Executive_ID
-    ORDER BY Project_ID
     """
 
     if(request.method == "POST" and form.submit_filter.data and form.validate_on_submit()):
-        query = """
-    SELECT Project_ID, P.Name AS P_Name, Summary, Project_Funds, Start_Date, End_Date, CONCAT(E.Name, ' ',  E.Surname) AS E_Name, Organization_ID, P.Program_ID AS P_Program, P.Research_Manager_ID AS P_remanager 
-    FROM Project P INNER JOIN Executive E 
-    ON P.Executive_ID = E.Executive_ID
-    ORDER BY Project_ID
-    """
         min_Start_Date = str(request.form.get('min_Start_Date'))
         max_Start_Date = str(request.form.get('max_Start_Date'))
         min_End_Date = str(request.form.get('min_End_Date'))
@@ -149,37 +142,41 @@ def projects_view():
         max_Duration = str(request.form.get('max_Duration'))
         executive = str(request.form.get('executive_f'))
         flag = False
+
         print("form!")
         print(max_Start_Date)
         where_or_and = 'WHERE'
         if min_Start_Date != '' and min_Start_Date != 'None':
             flag = True
-            query += f'WHERE DATEDIFF(P.Start_Date, \'{min_Start_Date}\') > 0'
+            query += f'WHERE DATEDIFF(Start_Date, \'{min_Start_Date}\') > 0'
             where_or_and = '\n    AND'
         if max_Start_Date != '' and max_Start_Date != 'None':
             flag = True
-            query += f'{where_or_and} DATEDIFF(P.Start_Date, \'{max_Start_Date}\') < 0'
+            query += f'{where_or_and} DATEDIFF(Start_Date, \'{max_Start_Date}\') < 0'
             where_or_and = '\n    AND'
         if min_End_Date != '' and min_End_Date != 'None':
             flag = True
-            query += f'{where_or_and} DATEDIFF(P.End_Date, \'{min_End_Date}\') > 0'
+            query += f'{where_or_and} DATEDIFF(End_Date, \'{min_End_Date}\') > 0'
             where_or_and = '\n    AND'
         if max_End_Date != '' and max_End_Date != 'None':
             flag = True
-            query += f'{where_or_and} DATEDIFF(P.End_Date, \'{max_End_Date}\') < 0'
+            query += f'{where_or_and} DATEDIFF(End_Date, \'{max_End_Date}\') < 0'
             where_or_and = '\n    AND'
         if min_Duration != '' and min_Duration != 'None':
             flag = True
-            query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) > {min_Duration}'
+            query += f'{where_or_and} DATEDIFF(End_Date, Start_Date) > {min_Duration}'
             where_or_and = '\n    AND'
         if max_Duration != '' and max_Duration != 'None':
             flag = True
-            query += f'{where_or_and} DATEDIFF(P.End_Date, P.Start_Date) < {max_Duration}'
+            query += f'{where_or_and} DATEDIFF(End_Date, Start_Date) < {max_Duration}'
             where_or_and = '\n    AND'
         if executive != '' and executive != 'None':
             flag = True
             query += f'{where_or_and} CONCAT(E.Name, \' \',  E.Surname) = \'{executive}\''
             where_or_and = '\n    AND'
+
+    query += '\n    ORDER BY Project_ID'
+    print(query)
 
     print(query)
     cur.execute(query)
