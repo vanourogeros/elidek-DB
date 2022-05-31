@@ -180,7 +180,7 @@
         document.getElementById("Street Number").value = row.getAttribute("data-number");
         document.getElementById("City").value = row.getAttribute("data-city");
         document.getElementById("Postal Code").value = row.getAttribute("data-pos");
-        document.getElementById("Type").value = row.getAttribute("data-type");
+       // document.getElementById("Type").value = row.getAttribute("data-type");
         document.getElementById("modal-form").action = "/organizations/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
