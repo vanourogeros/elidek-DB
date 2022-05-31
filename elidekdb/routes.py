@@ -278,8 +278,7 @@ def createProject():
     cur.execute(query)
 
     form.associated_program.choices = [entry for entry in cur.fetchall()]
-    cur.execute(
-        "SELECT Organization_ID, CONCAT(Organization_ID, ', ', Name) FROM Organization")
+    cur.execute("SELECT Organization_ID, CONCAT(Organization_ID, ', ', Name) FROM Organization")
     form.organization.choices = [entry for entry in cur.fetchall()]
 
     query = f"""
@@ -300,7 +299,7 @@ def createProject():
     organization = str(request.form.get('organization'))
     associated_program = str(request.form.get('associated_program'))
     research_manager = str(request.form.get('research_manager'))
-
+    exec_id = 0
     print(projID, name, summary, funds, executive, start_date,
           end_date, organization, associated_program, research_manager)
 
@@ -309,7 +308,7 @@ def createProject():
 
         try:
             cur = db.connection.cursor()
-            if (id == '0' or id == ''):
+            if (projID == '0' or projID == ''):
 
                 cur.execute(query1)
                 temp = cur.fetchall()
@@ -318,7 +317,7 @@ def createProject():
                 exec_id = id
             query2 = f"""
             INSERT INTO project (Project_ID, Name, Summary, Project_Funds, Start_Date, End_Date, Executive_ID, Program_ID, Organization_ID,  Research_Manager_ID) 
-            VALUES ('{projID}', '{name}', '{summary}','{funds}', '{start_date}', '{end_date}','{executive}', '{associated_program}', '{organization}','{research_manager}')
+            VALUES ('{exec_id}', '{name}', '{summary}','{funds}', '{start_date}', '{end_date}','{executive}', '{associated_program}', '{organization}','{research_manager}')
             """
             cur.execute(query2)
             db.connection.commit()
@@ -1055,14 +1054,14 @@ def createOrg():
     street = str(request.form.get('street'))
     number  = request.form.get('number')
     city = str(request.form.get('city'))
-    pos = request.form.get('orgID')
+    pos = request.form.get('pos')
     res_id = 0
-
-    if(request.method == "POST" and form.validate_on_submit()):
+    type = request.form.get('type')
+    if(request.method == "POST"):
         
         
         try:
-            query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
+            query1 =  """SELECT MAX(Organization_ID) FROM organization"""
             cur = db.connection.cursor()
             if (id == '0' or id == ''):
 
@@ -1071,10 +1070,14 @@ def createOrg():
                 res_id = int(temp[0][0] + 1)
             else:
                 res_id = id
+
             query2 = f"""
-            INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type) VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
+            INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type)
+            VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
             """
+            print(query2)
             cur.execute(query2)
+            print(query2)
             db.connection.commit()
             cur.close()
             flash("Organization created successfully", "success")
