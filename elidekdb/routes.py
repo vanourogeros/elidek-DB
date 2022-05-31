@@ -1010,10 +1010,21 @@ def update_orgs(orgID):
     acr = str(request.form.get('acr'))
     street = str(request.form.get('street'))
     num = request.form.get('number')
+    city = str(request.form.get('city'))
+    pos = request.form.get('pos')
+    cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
+    form.type.choices = [entry for entry in cur.fetchall()]
 
     if(form.validate_on_submit()):
         query = f"""
-        UPDATE organization SET Acronym = '{acr}', Name = '{name}', Street = '{street}', Street_Number = {num} WHERE Organization_ID =  {orgID}
+        UPDATE organization SET 
+        Acronym = '{acr}', 
+        Name = '{name}', 
+        Street = '{street}', 
+        Street_Number = {num},
+        City = '{city}' ,
+        Postal_Code = {pos}
+        WHERE Organization_ID =  {orgID}
         """
         print(query)
         try:
