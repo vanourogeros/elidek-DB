@@ -1056,11 +1056,12 @@ def createOrg():
     number  = request.form.get('number')
     city = str(request.form.get('city'))
     pos = request.form.get('orgID')
+    type = request.form.get('')
     res_id = 0
 
-    if(request.method == "POST" and form.validate_on_submit()):
-        
-        
+    if(request.method == "POST"):
+        print("mpike sti forma!")
+        print(id)
         try:
             query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
             cur = db.connection.cursor()
@@ -1074,7 +1075,9 @@ def createOrg():
             query2 = f"""
             INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type) VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
             """
+            print(query2)
             cur.execute(query2)
+            
             db.connection.commit()
             cur.close()
             flash("Organization created successfully", "success")

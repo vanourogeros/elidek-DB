@@ -188,7 +188,7 @@ class Org(FlaskForm):
     city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
     type = SelectField(u'Type', validate_choice=False)
-    submit = SubmitField("Create") #it is used for executive insertion
+    submit = SubmitField("Create") 
 
 
 class updateRes(FlaskForm):
