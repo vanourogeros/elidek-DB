@@ -7,7 +7,7 @@
             <button type="button" class="btn btn-outline-dark float-end">Back to organizations</button>
         </a>
         <div class="col-md-12">
-            <form class="form-horizontal" name="org-form" method="POST">
+            <form class="form-horizontal" name="researcher-form" method="POST">
                 <!-- hidden_tag returns the form's security metadata -->
                 {{ form.hidden_tag() }}
                 <div class="form-group col-sm-3 mb-3">
@@ -62,17 +62,6 @@
                     {% if form.number.errors %}
                     <ul class = "errors">
                         {% for error in form.number.errors %}
-                        <li class = "text-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                <div class="form-group col-sm-3 mb-3">
-                    {{ form.city.label(class = "form-label") }}
-                    {{ form.city(class = "form-control", placeholder="Enter city", required = False) }}
-                    {% if form.city.errors %}
-                    <ul class = "errors">
-                        {% for error in form.city.errors %}
                         <li class = "text-danger">{{ error }}</li>
                         {% endfor %}
                     </ul>

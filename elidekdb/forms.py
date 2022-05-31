@@ -40,24 +40,32 @@ class ProjectFilterForm(FlaskForm):
 
 
 class ProjectCreate(FlaskForm):
-    projID = IntegerField(label="Project ID", validators=[Optional()])
-    name = StringField(label="Project Name", validators=[DataRequired(message="Name is a required field.")])
-    summary = TextAreaField(label="Project Summary", validators=[DataRequired(message="Name is a required field.")])
-    funds = IntegerField(label="Project Funds", validators=[ NumberRange(min=100000, max=1000000)])
+    projID = IntegerField(label="Project ID")
+    name = StringField(label="Project Name", validators=[
+                       DataRequired(message="Name is a required field.")])
+    summary = TextAreaField(label="Project Summary", validators=[
+                            DataRequired(message="Name is a required field.")])
+    funds = IntegerField(label="Project Funds", validators=[
+                         NumberRange(min=100000, max=1000000)])
     executive = SelectField(u'Executive', validate_choice=False)
     start_date = DateField(label="Start Date")
     end_date = DateField(label="End Date")
     organization = SelectField(u'Select Organization:', validate_choice=False)
-    associated_program = SelectField(u'Select Associated Program:', validate_choice=False)
-    research_manager = SelectField(u'Select Research of choice for Research Manager position:', validate_choice=False)
+    associated_program = SelectField(
+        u'Select Associated Program:', validate_choice=False)
+    research_manager = SelectField(
+        u'Select Research of choice for Research Manager position:', validate_choice=False)
     submit = SubmitField("Create")
 
 
 class AddDeleteWork(FlaskForm):
-    title = StringField(label="Executive Name", validators=[DataRequired(message="Title is a required field.")])
-    summary = TextAreaField(label="Project Summary", validators=[ DataRequired(message="Summary is a required field.")])
+    title = StringField(label="Executive Name", validators=[
+                        DataRequired(message="Title is a required field.")])
+    summary = TextAreaField(label="Project Summary", validators=[
+                            DataRequired(message="Summary is a required field.")])
     submission_date = DateField(label="Submission Date")
-    add_or_delete = RadioField(u'Add/Delete', choices=['Add Selected Work', 'Delete Selected Work'])
+    add_or_delete = RadioField(
+        u'Add/Delete', choices=['Add Selected Work', 'Delete Selected Work'])
     submit = SubmitField("Do it  ⚠️Caution to your choice⚠️")
 
 
@@ -148,8 +156,10 @@ class RemoveProjectField(FlaskForm):
 
 
 class newField(FlaskForm):
-    field_name = StringField(label="Project Name", validators=[ DataRequired(message="Name is a required field.")])
-    checkbox_cf = RadioField(u'I want to add a new field', choices=['Yes', 'No'])
+    field_name = StringField(label="Project Name", validators=[
+                             DataRequired(message="Name is a required field.")])
+    checkbox_cf = RadioField(
+        u'I want to add a new field', choices=['Yes', 'No'])
     submit = SubmitField("Add Field")
 
 
@@ -162,8 +172,10 @@ class deleteField(FlaskForm):
 
 class editField(FlaskForm):
     field = SelectField(u'Field ID', validate_choice=False)
-    field_name = StringField(label="Project Name", validators=[ DataRequired(message="Name is a required field.")])
-    checkbox_ef = RadioField(u'I want to edit an existing field', choices=['Yes', 'No'])
+    field_name = StringField(label="Project Name", validators=[
+                             DataRequired(message="Name is a required field.")])
+    checkbox_ef = RadioField(
+        u'I want to edit an existing field', choices=['Yes', 'No'])
     submit = SubmitField("Edit Field")
 
 
@@ -173,7 +185,7 @@ class Org(FlaskForm):
     acr = StringField(label = "Acronym", validators = [DataRequired(message = "Acronym is a required field.")])
     street = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     number = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field.")])
-    city = StringField(label = "City", validators = [DataRequired(message = "Street is a required field.")])
+    city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
     type = SelectField(u'Type', validate_choice=False)
     submit = SubmitField("Create") 
