@@ -106,6 +106,8 @@
                             Postal Code :
                             {{ form.pos(id = "Postal Code", required = False) }}
                         </p>
+                        <input type="text" name="type" id="type" readonly></b></p>
+                        {{ form.type(id = "Name", required = False) }}
                     </div>
                     <div>
                         {% if form.name.errors %}
@@ -132,6 +134,20 @@
                         {% if form.number.errors %}
                         <ul class = "errors">
                             {% for error in form.number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.city.errors %}
+                        <ul class = "errors">
+                            {% for error in form.city.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.pos.errors %}
+                        <ul class = "errors">
+                            {% for error in form.pos.errors %}
                             <li class = "alert text-danger">{{ error }}</li>
                             {% endfor %}
                         </ul>

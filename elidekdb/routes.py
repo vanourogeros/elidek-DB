@@ -978,8 +978,7 @@ def orgs_view():
     """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
-    organizations = [dict(zip(column_names, entry))
-                     for entry in cur.fetchall()]
+    organizations = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
     return render_template("organizations.html", organizations=organizations, pageTitle="organizations Page", form=form)
@@ -1054,6 +1053,8 @@ def createOrg():
     city = str(request.form.get('city'))
     pos = request.form.get('pos')
     type = str(request.form.get('type'))
+    budget1 = request.form.get('budget1')
+    budget2 = request.form.get('budget2')
     res_id = 0
 
     if(request.method == "POST"):
@@ -1074,6 +1075,22 @@ def createOrg():
             VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
             """
             cur.execute(query2)
+            if (type == 'Research Center') :
+                query = f""" INSERT INTO research_center (Research_Center_ID, Org_Type, Ministry_Budget,Actions_Budget)
+                VALUES ('{res_id}','{type}','{budget1}','{budget2}')
+                """
+                if (budget2 == ''):
+                    flash("Actions Budget is required", "danger")
+                    return render_template("create_organization.html", pageTitle = "Create Organization", form = form)
+            elif (type == 'University') :
+                query = f""" INSERT INTO university (University_ID, Org_Type, Ministry_Budget)
+                VALUES ('{res_id}','{type}','{budget1}')
+                """
+            else :
+                query = f""" INSERT INTO company (Company_ID, Org_Type, Equity)
+                VALUES ('{res_id}','{type}','{budget1}')
+                """
+            cur.execute(query)
             db.connection.commit()
             cur.close()
             flash("Organization created successfully", "success")
