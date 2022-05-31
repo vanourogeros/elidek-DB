@@ -1094,6 +1094,7 @@ def createOrg():
             db.connection.commit()
             cur.close()
             flash("Organization created successfully", "success")
+            redirect("/organizations")
 
         except Exception as e: ## OperationalError
             flash(str(e), "danger")
@@ -1105,8 +1106,8 @@ def createOrg():
 def org_phones(orgID):
     cur = db.connection.cursor()
     form = orgPhone()
-    query = """
-    SELECT Phone_Number FROM Org_Phone
+    query = f"""
+    SELECT Phone_Number FROM Org_Phone WHERE Organization_ID={orgID}
     ORDER BY Phone_Number
     """
     cur.execute(query)
@@ -1118,11 +1119,13 @@ def org_phones(orgID):
             phone_number = request.form.get("phone_number")
             query = f"""
             INSERT INTO org_phone (Organization_ID, Phone_Number)
-            VALUES ({orgID}, {phone_number})
+            VALUES ('{orgID}', '{phone_number}')
             """
+            print(query)
             cur.execute(query)
             db.connection.commit()
             flash("Phone successfully added!", "success")
+            redirect('/organizations/phones/orgID')
         except Exception as e:
             flash(str(e), "danger")
 
