@@ -1101,6 +1101,47 @@ def createOrg():
     ## else, response for GET request
     return render_template("create_organization.html", pageTitle = "Create Organization", form = form)  
 
+@app.route("/organizations/phones/<int:orgID>", methods = ["GET", "POST"])
+def org_phones(orgID):
+    cur = db.connection.cursor()
+    form = orgPhone()
+    query = """
+    SELECT Phone_Number FROM Org_Phone
+    ORDER BY Phone_Number
+    """
+    cur.execute(query)
+    column_names = [i[0] for i in cur.description]
+    results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+    
+    if(form.validate_on_submit() and request.method == "POST"):
+        try:
+            phone_number = request.form.get("phone_number")
+            query = f"""
+            INSERT INTO org_phone (Organization_ID, Phone_Number)
+            VALUES ({orgID}, {phone_number})
+            """
+            cur.execute(query)
+            db.connection.commit()
+            flash("Phone successfully added!", "success")
+        except Exception as e:
+            flash(str(e), "danger")
+
+    return render_template("organization_phones.html", pageTitle = f"Phones for Organization with ID {orgID}",
+     results=results, form = form, orgID=orgID)  
+
+@app.route("/organizations/phones/<int:orgID>/delete/<int:phone_number>", methods = ["GET", "POST"])
+def delete_org_phone(orgID, phone_number):
+    cur = db.connection.cursor()
+    query = f"""
+    DELETE FROM org_phone
+    WHERE organization_ID = {orgID} 
+    AND phone_number = {phone_number}
+    """
+    cur.execute(query)
+    db.connection.commit()
+    flash("Phone successfully deleted!", "success")
+    return redirect(f'/organizations/phones/{orgID}')
+
 @app.route("/researchers", methods = ["GET", "POST"])
 def researchers_view():
     cur = db.connection.cursor()

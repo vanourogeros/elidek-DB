@@ -177,6 +177,9 @@ class Org(FlaskForm):
     type = SelectField(u'Type', validate_choice=False)
     submit = SubmitField("Create") 
 
+class orgPhone(FlaskForm):
+    phone_number = StringField(label = "Phone Number", validators = [DataRequired(message = "Phone is a required field.")])
+    submit = SubmitField("Add phone number")
 
 class updateRes(FlaskForm):
     resID = IntegerField(label="Researcher ID", validators=[Optional()])
