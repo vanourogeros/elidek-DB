@@ -1009,11 +1009,19 @@ def update_orgs(orgID):
     name = str(request.form.get('name'))
     acr = str(request.form.get('acr'))
     street = str(request.form.get('street'))
-    num = request.form.get('number')
+    number = request.form.get('number')
+    city = str(request.form.get('city'))
+    pos = request.form.get('pos')
+    
+    cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
+    form.type.choices = [entry for entry in cur.fetchall()] 
+    type = request.form.get('type')
 
     if(form.validate_on_submit()):
         query = f"""
-        UPDATE organization SET Acronym = '{acr}', Name = '{name}', Street = '{street}', Street_Number = {num} WHERE Organization_ID =  {orgID}
+        UPDATE organization SET Acronym = '{acr}', Name = '{name}',
+        Street = '{street}', Street_Number = {number}, City = '{city}',
+        Postal_Code = {pos}  WHERE Organization_ID =  {orgID}
         """
         print(query)
         try:
@@ -1038,30 +1046,32 @@ def createOrg():
     cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
     form.type.choices = [entry for entry in cur.fetchall()]
 
-    id = request.form.get('orgID')
+    orgID = request.form.get('orgID')
     name = str(request.form.get('name'))
     acr = str(request.form.get('acr'))
     street = str(request.form.get('street'))
-    number  = request.form.get('number')
+    number = request.form.get('number')
     city = str(request.form.get('city'))
-    pos = request.form.get('orgID')
+    pos = request.form.get('pos')
+    type = str(request.form.get('type'))
     res_id = 0
 
-    if(request.method == "POST" and form.validate_on_submit()):
+    if(request.method == "POST"):
         
         
         try:
-            query1 =  """SELECT MAX(Researcher_ID) FROM Researcher"""
+            query1 =  """SELECT MAX(Organization_ID) FROM organization"""
             cur = db.connection.cursor()
-            if (id == '0' or id == ''):
+            if (orgID == '0' or orgID == ''):
 
                 cur.execute(query1)
                 temp = cur.fetchall()
                 res_id = int(temp[0][0] + 1)
             else:
-                res_id = id
+                res_id = orgID
             query2 = f"""
-            INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type) VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
+            INSERT INTO organization (Organization_ID, Acronym, Name, Street, Street_Number, City, Postal_Code, Org_type)
+            VALUES ('{res_id}', '{acr}','{name}', '{street}', '{number}', '{city}', '{pos}', '{type}')
             """
             cur.execute(query2)
             db.connection.commit()

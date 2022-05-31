@@ -43,6 +43,7 @@
                                     data-name="{{org.Name}}"  data-id= "{{org.Organization_ID}}"
                                     data-street="{{org.Street}}"  data-number= "{{org.Street_Number}}"
                                     data-city="{{org.City}}" data-pos="{{org.Postal_Code}}" 
+                                    data-type="{{org.Type}}"
                                     data-bs-toggle = "modal"
                                     data-bs-target="#editModal">
                                         <i class="fa fa-edit"></i>
@@ -179,6 +180,7 @@
         document.getElementById("Street Number").value = row.getAttribute("data-number");
         document.getElementById("City").value = row.getAttribute("data-city");
         document.getElementById("Postal Code").value = row.getAttribute("data-pos");
+        document.getElementById("Type").value = row.getAttribute("data-type");
         document.getElementById("modal-form").action = "/organizations/update/" + document.getElementById("id").value;
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});

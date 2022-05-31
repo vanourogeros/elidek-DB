@@ -78,10 +78,20 @@
                     </ul>
                     {% endif %}
                 </div>
-              
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.city.label(class = "form-label") }}
+                    {{ form.city(class = "form-control", placeholder="Enter city", required = False) }}
+                    {% if form.city.errors %}
+                    <ul class = "errors">
+                        {% for error in form.city.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
                 <div class="form-group col-sm-3 mb-3">
                     {{ form.type.label(class = "form-label") }}
-                    {{ form.type(class = "form-select", placeholder="Enter orgID", required = False) }}
+                    {{ form.type(class = "form-select", placeholder="Choose organization type", required = False) }}
                     {% if form.type %}
                     <ul class = "errors">
                         {% for error in type %}

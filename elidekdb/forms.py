@@ -40,21 +40,16 @@ class ProjectFilterForm(FlaskForm):
 
 
 class ProjectCreate(FlaskForm):
-    projID = IntegerField(label="Project ID")
-    name = StringField(label="Project Name", validators=[
-                       DataRequired(message="Name is a required field.")])
-    summary = TextAreaField(label="Project Summary", validators=[
-                            DataRequired(message="Name is a required field.")])
-    funds = IntegerField(label="Project Funds", validators=[
-                         NumberRange(min=100000, max=1000000)])
+    projID = IntegerField(label="Project ID", validators=[Optional()])
+    name = StringField(label="Project Name", validators=[DataRequired(message="Name is a required field.")])
+    summary = TextAreaField(label="Project Summary", validators=[DataRequired(message="Name is a required field.")])
+    funds = IntegerField(label="Project Funds", validators=[NumberRange(min=100000, max=1000000)])
     executive = SelectField(u'Executive', validate_choice=False)
     start_date = DateField(label="Start Date")
     end_date = DateField(label="End Date")
     organization = SelectField(u'Select Organization:', validate_choice=False)
-    associated_program = SelectField(
-        u'Select Associated Program:', validate_choice=False)
-    research_manager = SelectField(
-        u'Select Research of choice for Research Manager position:', validate_choice=False)
+    associated_program = SelectField(u'Select Associated Program:', validate_choice=False)
+    research_manager = SelectField(u'Select Research of choice for Research Manager position:', validate_choice=False)
     submit = SubmitField("Create")
 
 
@@ -85,18 +80,14 @@ class SelectResearchField(FlaskForm):
 
 class ProjUpdate(FlaskForm):
     projID = IntegerField(label="Project ID")
-    name = StringField(label="Project Name", validators=[
-                       DataRequired(message="Name is a required field.")])
-    summary = TextAreaField(label="Project Summary", validators=[
-                            DataRequired(message="Name is a required field.")])
-    funds = IntegerField(label="Project Funds", validators=[
-                         NumberRange(min=100000, max=1000000)])
+    name = StringField(label="Project Name", validators=[DataRequired(message="Name is a required field.")])
+    summary = TextAreaField(label="Project Summary", validators=[DataRequired(message="Name is a required field.")])
+    funds = IntegerField(label="Project Funds", validators=[ NumberRange(min=100000, max=1000000)])
     executive = SelectField(u'Executive', validate_choice=False)
     start_date = DateField(label="Start Date")
     end_date = DateField(label="End Date")
     organization = SelectField(u'Org ID', validate_choice=False)
-    associated_program = SelectField(
-        u'associated_program', validate_choice=False)
+    associated_program = SelectField(u'associated_program', validate_choice=False)
     research_manager = SelectField(u'research_manager', validate_choice=False)
     submit = SubmitField("Update")
 
@@ -104,30 +95,24 @@ class ProjUpdate(FlaskForm):
 class WorksOnAdd(FlaskForm):
     researcher = SelectField(u'Researcher ID', validate_choice=False)
     project = SelectField(u'Project ID', validate_choice=False)
-    start_date = DateField(label="Start Date", validators=[
-                           DataRequired(message="Name is a required field.")])
-    checkbox = RadioField(
-        u'I want to add a researcher to a project', choices=['Yes', 'No'])
+    start_date = DateField(label="Start Date", validators=[DataRequired(message="Name is a required field.")])
+    checkbox = RadioField(u'I want to add a researcher to a project', choices=['Yes', 'No'])
     submit = SubmitField("Add Researcher to Project")
 
 
 class WorksOnDelete(FlaskForm):
     researcher_d = SelectField(u'Org ID', validate_choice=False)
     project_d = SelectField(u'Org ID', validate_choice=False)
-    checkbox_d = RadioField(
-        u'I want to remove a researcher from a project', choices=['Yes', 'No'])
+    checkbox_d = RadioField(u'I want to remove a researcher from a project', choices=['Yes', 'No'])
     submit_d = SubmitField("Remove Researcher from Project")
 
 
 class EvalAdd(FlaskForm):
     researcher = SelectField(u'eval ID', validate_choice=False)
     project = SelectField(u'eval ID', validate_choice=False)
-    eval_grade = IntegerField(label="Evaluation Grade", validators=[
-                              NumberRange(min=1, max=10)])
-    eval_date = DateField(label="Eval Date", validators=[
-                          DataRequired(message="Name is a required field.")])
-    checkbox_ea = RadioField(
-        u'I want to add an evaluator to a project', choices=['Yes', 'No'])
+    eval_grade = IntegerField(label="Evaluation Grade", validators=[NumberRange(min=1, max=10)])
+    eval_date = DateField(label="Eval Date", validators=[DataRequired(message="Name is a required field.")])
+    checkbox_ea = RadioField( u'I want to add an evaluator to a project', choices=['Yes', 'No'])
     submit = SubmitField("Add Project Evaluator")
 
 
@@ -185,8 +170,8 @@ class Org(FlaskForm):
     acr = StringField(label = "Acronym", validators = [DataRequired(message = "Acronym is a required field.")])
     street = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
     number = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field.")])
-    city = StringField(label = "Street", validators = [DataRequired(message = "Street is a required field.")])
-    pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Street number is a required field."),NumberRange(min=10000, max=99999)])
+    city = StringField(label = "City", validators = [DataRequired(message = "City is a required field.")])
+    pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Posatal Code is a required field."),NumberRange(min=10000, max=99999)])
     type = SelectField(u'Type', validate_choice=False)
     submit = SubmitField("Create") 
 
