@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS University (
   CONSTRAINT fk_University_Organization1
     FOREIGN KEY (University_ID)
     REFERENCES Organization (Organization_ID)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS Research_Center (
   CONSTRAINT fk_Research_Center_ID
     FOREIGN KEY (Research_Center_ID)
     REFERENCES Organization (Organization_ID)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS Company (
   CONSTRAINT fk_Company_ID
     FOREIGN KEY (Company_ID)
     REFERENCES Organization (Organization_ID)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -226,7 +226,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS Org_Phone (
   Organization_ID INT UNSIGNED NOT NULL,
   Phone_Number CHAR(10) NOT NULL,
-  CONSTRAINT chk_phone CHECK (Phone_Number not like '%[^0-9]%'),
+  CONSTRAINT chk_phone CHECK (Phone_Number RLIKE('[0-9]{10}')),
   -- CONSTRAINT chk_phone CHECK REGEXP('[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
   PRIMARY KEY (Organization_ID, Phone_Number),
   CONSTRAINT fk_Organization_ID
@@ -333,6 +333,17 @@ BEGIN
     SIGNAL SQLSTATE '45000'
            SET MESSAGE_TEXT = 'check constraint on Project failed - Organization can only change if project has no researchers.';
 	   END IF;
+    END IF;
+END$   
+DELIMITER ; 
+
+DELIMITER $
+CREATE TRIGGER chk_phone_unique BEFORE INSERT ON org_phone
+FOR EACH ROW
+BEGIN
+    IF (new.Phone_Number IN (SELECT Phone_Number from org_phone)) THEN
+	SIGNAL SQLSTATE '45000'
+           SET MESSAGE_TEXT = 'check constraint on org_phone failed - A phone number cannot exist twice in the table.';
     END IF;
 END$   
 DELIMITER ; 
