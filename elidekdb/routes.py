@@ -838,7 +838,7 @@ def consecutive_year_orgs_view():
                     AND Organization_ID = O
                 ) AS Projects_Last_Year
                 from project
-                having Projects_This_Year = Projects_Last_Year
+                having Projects_This_Year = Projects_Last_Year AND Projects_This_Year >= 10
                 order by O
             ) X INNER JOIN Organization ON Organization.Organization_ID = X.O
             """
@@ -847,7 +847,7 @@ def consecutive_year_orgs_view():
     results = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
     cur.close()
 
-    return render_template("consecutive_years.html", results=results, pageTitle="Organizations with same number of projects in two concecutive years (more than 10 soon)")
+    return render_template("consecutive_years.html", results=results, pageTitle="Organizations with same number of projects -more than 10- in two concecutive years")
 
 
 @app.route("/top-three-field-pairs")
