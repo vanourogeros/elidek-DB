@@ -898,15 +898,13 @@ def prolific_researchers():
             FROM Works_On INNER JOIN Researcher
             ON Works_On.Researcher_ID = Researcher.Researcher_ID
             WHERE DATEDIFF(NOW(), Birth_Date) < 365*40
-            ORDER BY project_cnt DESC;
+            ORDER BY project_cnt DESC LIMIT 10;
             """
     cur.execute(query)
 
     query = """
-            select DISTINCT T2.R_ID, T2.Full_Name, T2.Age, T2.project_cnt FROM
-            (select * from project_count
-            HAVING project_cnt = MAX(project_cnt)) T1
-            INNER JOIN project_count T2 ON T1.project_cnt = T2.project_cnt
+            select DISTINCT * FROM
+            project_count
             """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
@@ -973,8 +971,18 @@ def orgs_view():
     cur = db.connection.cursor()
     form = Org()
     query = """
-    SELECT *
-    FROM organization
+    SELECT Organization_ID, Acronym, Name, Street, Street_Number,
+    City, Postal_Code, Organization.Org_Type, Ministry_Budget AS budget1, NULL AS budget2
+    FROM organization INNER JOIN University ON Organization_ID=University_ID
+    UNION
+    SELECT Organization_ID, Acronym, Name, Street, Street_Number,
+    City, Postal_Code, Organization.Org_Type, Ministry_Budget AS budget1, Actions_Budget AS budget2
+    FROM organization INNER JOIN Research_Center ON Organization_ID=Research_Center_ID
+    UNION
+    SELECT Organization_ID, Acronym, Name, Street, Street_Number,
+    City, Postal_Code, Organization.Org_Type, Equity AS budget1, NULL AS budget2
+    FROM organization INNER JOIN Company ON Organization_ID=Company_ID
+    ORDER BY Organization_ID
     """
     cur.execute(query)
     column_names = [i[0] for i in cur.description]
@@ -1011,6 +1019,8 @@ def update_orgs(orgID):
     number = request.form.get('number')
     city = str(request.form.get('city'))
     pos = request.form.get('pos')
+    budget1 = request.form.get('budget1')
+    budget2 = request.form.get('budget2')
     
     cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
     form.type.choices = [entry for entry in cur.fetchall()] 
@@ -1026,8 +1036,29 @@ def update_orgs(orgID):
         try:
             cur = db.connection.cursor()
             cur.execute(query)
-            db.connection.commit()
-            cur.close()
+            db.connection.commit()         
+            if type == "University":
+                query = f"""
+                UPDATE University SET Ministry_Budget={budget1}
+                WHERE University_ID='{orgID}'
+                """
+                cur.execute(query)
+                db.connection.commit()
+            elif type == "Company":
+                query = f"""
+                UPDATE Company SET Equity={budget1}
+                WHERE Company_ID='{orgID}'
+                """
+                cur.execute(query)
+                db.connection.commit()
+            elif type == "Research Center":
+                query = f"""
+                UPDATE Research_Center SET Ministry_Budget={budget1}, Actions_Budget={budget2}
+                WHERE Research_Center_ID='{orgID}'
+                """
+                cur.execute(query)
+                db.connection.commit() 
+                cur.close()   
             flash("Organization updated successfully", "success")
         except Exception as e:
             flash(str(e), "danger")
@@ -1079,9 +1110,6 @@ def createOrg():
                 query = f""" INSERT INTO research_center (Research_Center_ID, Org_Type, Ministry_Budget,Actions_Budget)
                 VALUES ('{res_id}','{type}','{budget1}','{budget2}')
                 """
-                if (budget2 == ''):
-                    flash("Actions Budget is required", "danger")
-                    return render_template("create_organization.html", pageTitle = "Create Organization", form = form)
             elif (type == 'University') :
                 query = f""" INSERT INTO university (University_ID, Org_Type, Ministry_Budget)
                 VALUES ('{res_id}','{type}','{budget1}')

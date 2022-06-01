@@ -3,7 +3,9 @@
 <div class="container">
     {% include "flash_messages.html" %}
     <h3>{{pageTitle}}</h3>
-
+    <a href='/organizations'>
+        <button type="button" class="btn btn-outline-dark float-end">Back to organizations</button>
+    </a>
     <div class="col-md-12" align="center">
         <form class="form-horizontal" name="project-form" method="POST">
             <!-- hidden_tag returns the form's security metadata -->
