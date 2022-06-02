@@ -172,7 +172,7 @@ class Org(FlaskForm):
     number = IntegerField(label = "Street Number", validators = [DataRequired(message = "Street number is a required field.")])
     city = StringField(label = "City", validators = [DataRequired(message = "City is a required field.")])
     pos = IntegerField(label = "Postal Code", validators = [DataRequired(message = "Postal Code is a required field."),NumberRange(min=10000, max=99999)])
-    budget1 = IntegerField(label = "Organization Budget", validators = [DataRequired(message = "Budget is required."),NumberRange(min=10000, max=10000000)])
+    budget1 = IntegerField(label = "Organization Budget", validators = [Optional(),NumberRange(min=10000, max=10000000)])
     budget2 = IntegerField(label = "Actions Budget", validators = [Optional(),NumberRange(min=10000, max=10000000)])
     type = SelectField(u'Type', validate_choice=False)
     submit = SubmitField("Create") 
