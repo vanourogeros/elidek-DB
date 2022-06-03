@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS  Project (
   INDEX fk_Project_Executive_idx (Executive_ID ASC) ,
   INDEX fk_Project_Program_idx (Program_ID ASC) ,
   INDEX fk_Project_Organization_idx (Organization_ID ASC) ,
+  INDEX Project_StartDate_idx (Start_Date) ,
+  INDEX Project_EndDate_idx (End_Date) ,
   UNIQUE INDEX Project_ID_UNIQUE (Project_ID ASC) ,
   CONSTRAINT fk_Project_Organization
     FOREIGN KEY (Organization_ID)
@@ -152,6 +154,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Research_Field (
   Field_ID INT UNSIGNED NOT NULL,
+  INDEX Research_Field_idx (Field_ID),
   Name VARCHAR(45) NOT NULL,
   PRIMARY KEY (Field_ID))
 ENGINE = InnoDB;
@@ -228,7 +231,7 @@ CREATE TABLE IF NOT EXISTS Org_Phone (
   Phone_Number CHAR(10) NOT NULL,
   CONSTRAINT chk_phone CHECK (Phone_Number RLIKE('[0-9]{10}')),
   -- CONSTRAINT chk_phone CHECK REGEXP('[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), -- check that no number is not a digit 
-  PRIMARY KEY (Organization_ID, Phone_Number),
+  PRIMARY KEY (Phone_Number),
   CONSTRAINT fk_Organization_ID
     FOREIGN KEY (Organization_ID)
     REFERENCES Organization (Organization_ID)
@@ -333,17 +336,6 @@ BEGIN
     SIGNAL SQLSTATE '45000'
            SET MESSAGE_TEXT = 'check constraint on Project failed - Organization can only change if project has no researchers.';
 	   END IF;
-    END IF;
-END$   
-DELIMITER ; 
-
-DELIMITER $
-CREATE TRIGGER chk_phone_unique BEFORE INSERT ON org_phone
-FOR EACH ROW
-BEGIN
-    IF (new.Phone_Number IN (SELECT Phone_Number from org_phone)) THEN
-	SIGNAL SQLSTATE '45000'
-           SET MESSAGE_TEXT = 'check constraint on org_phone failed - A phone number cannot exist twice in the table.';
     END IF;
 END$   
 DELIMITER ; 
