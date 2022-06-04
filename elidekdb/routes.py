@@ -1022,8 +1022,9 @@ def update_orgs(orgID):
     budget1 = request.form.get('budget1')
     budget2 = request.form.get('budget2')
     
-    cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
-    form.type.choices = [entry for entry in cur.fetchall()] 
+    #cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
+    #form.type.choices = [entry for entry in cur.fetchall()] 
+    form.type.choices = [u'Research Center',u'University',u'Company']
     type = request.form.get('type')
 
     if(form.validate_on_submit()):
@@ -1073,8 +1074,9 @@ def createOrg():
     cur = db.connection.cursor() 
     form = Org()
 
-    cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
-    form.type.choices = [entry for entry in cur.fetchall()]
+    #cur.execute("SELECT DISTINCT Org_type, Org_type FROM organization")
+    #form.type.choices = [entry for entry in cur.fetchall()] 
+    form.type.choices = [u'Research Center',u'University',u'Company']
 
     orgID = request.form.get('orgID')
     name = str(request.form.get('name'))
@@ -1187,8 +1189,9 @@ def researchers_view():
     cur.close()
 
     cur = db.connection.cursor()
-    cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
-    form.gender.choices = [entry for entry in cur.fetchall()]
+    #cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
+    #form.gender.choices = [entry for entry in cur.fetchall()]
+    form.gender.choices = [u'Male',u'Female',u'Other']
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form.orgID.choices = [entry for entry in cur.fetchall()]
     cur.close()
@@ -1200,8 +1203,9 @@ def updateResearcher(Researcher_ID):
 
     cur = db.connection.cursor()
     form = updateRes()
-    cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
-    form.gender.choices = [entry for entry in cur.fetchall()]
+    #cur.execute("SELECT DISTINCT Gender,Gender FROM Researcher")
+    #form.gender.choices = [entry for entry in cur.fetchall()]
+    form.gender.choices = [u'Male',u'Female',u'Other']
     cur.execute("SELECT Organization_ID, Name FROM Organization")
     form.orgID.choices = [entry for entry in cur.fetchall()]
 
