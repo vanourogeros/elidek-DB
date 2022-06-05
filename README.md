@@ -7,7 +7,7 @@ Project for the Databases 2022 class in NTUA ECE that simulates a Database for t
 - Chrysa Pratikaki    03119131 [cpratikaki](https://github.com/cpratikaki)
 
 ## ER Diagram (in Greek)
-![image](https://user-images.githubusercontent.com/61976410/172052702-79ff2b1a-d2b6-43cc-85ad-787644115772.png)
+![image](https://user-images.githubusercontent.com/62110837/172057838-ed871f63-ae29-498f-ab79-301cb39398a3.png)
 
 ## Relational Model
 ![image](https://user-images.githubusercontent.com/61976410/172052725-99211133-2059-4af2-8b0c-930bece7b258.png)
