@@ -2,9 +2,9 @@
 Project for the Database Systems 2022 class in NTUA ECE that simulates a Database for the Hellenic Foundation for Research and Innovation (ELIDEK). 
 
 ## Authors
-- Ioannis Protogeros  03119008 @vanourogeros
-- Myrsini Kellari     03119082 @mpyrsini
-- Chrysa Pratikaki    03119131 @cpratikaki
+- Ioannis Protogeros  03119008 [vanourogeros](https://github.com/vanourogeros)
+- Myrsini Kellari     03119082 [mpyrsini](https://github.com/mpyrsini)
+- Chrysa Pratikaki    03119131 [cpratikaki](https://github.com/cpratikaki)
 
 ## Installation Guide
 - Download this repository using the command `git clone https://github.com/vanourogeros/elidek-D`
