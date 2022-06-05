@@ -75,7 +75,7 @@ class ExecUpdate(FlaskForm):
 
 class SelectResearchField(FlaskForm):
     ResearchField = SelectField(u'Field name', validate_choice=False)
-    submit = SubmitField("get it bozo")
+    submit = SubmitField("Find Projects")
 
 
 class ProjUpdate(FlaskForm):
