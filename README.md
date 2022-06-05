@@ -13,9 +13,9 @@ Project for the Databases 2022 class in NTUA ECE that simulates a Database for t
 ![image](https://user-images.githubusercontent.com/61976410/172052725-99211133-2059-4af2-8b0c-930bece7b258.png)
 
 ## Installation Guide
-- Download this repository using the command `git clone https://github.com/vanourogeros/elidek-D`
-in the working directory
-- Use the command `pip install requirements.txt` to download the needed libraries
+- Clone this repository using the command `git clone https://github.com/vanourogeros/elidek-D`
+in a local working directory
+- Use the command `pip install requirements.txt` in said directory to download the needed libraries
 - Create the database using a DBSM that supports MySQL/MariaDB and run the scripts `elidek_create_schema.sql` and `elidek_insert_data.sql`
 - Use the command `python3 run.py` or `python run.py` and visit `http://localhost:3000/` from a browser
 
