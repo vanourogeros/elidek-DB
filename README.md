@@ -20,7 +20,7 @@ in a local working directory
 - Use the command `python3 run.py` or `python run.py` and visit `http://localhost:3000/` from a browser
 
 ## Tools Used
-The tool used for this project as shown in the file requirements.txt are
+The tools used for this project as shown in the file requirements.txt are
 >click==8.1.2 <br>
 >dnspython==2.2.1<br>
 >email-validator==1.1.3<br>
